@@ -1,0 +1,32 @@
+[tool.poe.tasks]
+# run with eg `uv run poe fmt`
+fmt = "ruff format ${PWD}"
+lint = "ruff check --fix ${PWD}"
+check = "basedpyright ${PWD}"
+test = "pytest ${PWD}"
+# run all the above
+all = [ {ref="fmt"}, {ref="lint"}, {ref="check"}, {ref="test"} ]
+
+echo = "echo ${PWD}"
+
+"ci:fmt" = "ruff format --check ${PWD}"  # fail if not formatted
+"ci:lint" = "ruff check ${PWD}"
+
+[project]
+name = "postmodern"
+version = "0.1.0"
+description = "Example monorepo using uv"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "basedpyright >= 1.23.1",
+    "poethepoet>=0.32.0",
+    "pytest >= 8.3.4",
+    "ruff >= 0.8.5",
+]
+
+[tool.uv.workspace]
+members = ["libs/*", "apps/*"]
