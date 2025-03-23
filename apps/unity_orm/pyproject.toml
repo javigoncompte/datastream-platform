@@ -27,12 +27,3 @@ unity-orm = "unity_orm.cli:main"
 
 [dependency-groups]
 dev = ["basedpyright >= 1.23.1", "pytest >= 8.3.4", "ruff >= 0.9.9"]
-
-
-[tool.black]
-line-length = 88
-target-version = ["py310"]
-
-[tool.isort]
-profile = "black"
-line_length = 88

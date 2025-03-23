@@ -5,7 +5,7 @@ from unity_orm.logger import get_logger
 logger = get_logger(__name__)
 
 
-def get_spark(profile="qa"):
+def get_spark(profile: str = None):
     """Get a Databricks Spark session.
 
     Handles session recreation if the session fails due to inactivity.
@@ -18,17 +18,10 @@ def get_spark(profile="qa"):
     """
     try:
         spark = (
-            DatabricksSession.builder.serverless(True)
-            .profile(profile)
-            .getOrCreate()
+            DatabricksSession.builder.serverless(True).profile(profile).getOrCreate()
         )
         return spark
     except Exception as e:
         logger.error(f"Spark session failed: {str(e)}")
         logger.info("Creating new session...")
-        # Simply try once more
-        return (
-            DatabricksSession.builder.serverless(True)
-            .profile(profile)
-            .getOrCreate()
-        )
+        return DatabricksSession.builder.serverless(True).profile(profile).getOrCreate()
