@@ -1,0 +1,38 @@
+[project]
+name = "unity-orm"
+version = "0.1.0"
+description = "ORM creator and migration tools for Databricks Unity Catalog"
+readme = "README.md"
+authors = [{ name = "jcompte", email = "javiergonzalez7@gmail.com" }]
+requires-python = ">=3.10, <4"
+dependencies = [
+    "databricks-sqlalchemy~=2.0.5",
+    "databricks-connect>=15.4.7",
+    "sqlalchemy~=2.0.0",
+    "alembic~=1.13.1",
+    "click~=8.1.7",
+    "pydantic~=2.6.0",
+    "typing-extensions~=4.9.0",
+    "databricks-sql-connector~=4.0.0",
+    "inquirer~=3.4.0",
+    "sqlacodegen~=3.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+unity-orm = "unity_orm.cli:main"
+
+[dependency-groups]
+dev = ["basedpyright >= 1.23.1", "pytest >= 8.3.4", "ruff >= 0.9.9"]
+
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 88

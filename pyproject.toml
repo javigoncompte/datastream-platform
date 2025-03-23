@@ -5,17 +5,17 @@ lint = "ruff check --fix ${PWD}"
 check = "basedpyright ${PWD}"
 test = "pytest ${PWD}"
 # run all the above
-all = [ {ref="fmt"}, {ref="lint"}, {ref="check"}, {ref="test"} ]
+all = [{ ref = "fmt" }, { ref = "lint" }, { ref = "check" }, { ref = "test" }]
 
 echo = "echo ${PWD}"
 
-"ci:fmt" = "ruff format --check ${PWD}"  # fail if not formatted
+"ci:fmt" = "ruff format --check ${PWD}" # fail if not formatted
 "ci:lint" = "ruff check ${PWD}"
 
 [project]
-name = "postmodern"
+name = "datastream-platform"
 version = "0.1.0"
-description = "Example monorepo using uv"
+description = "Datastream Platform"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
@@ -25,8 +25,26 @@ dev = [
     "basedpyright >= 1.23.1",
     "poethepoet>=0.32.0",
     "pytest >= 8.3.4",
-    "ruff >= 0.8.5",
+    "ruff >= 0.9.9",
 ]
 
 [tool.uv.workspace]
 members = ["libs/*", "apps/*"]
+
+[tool.ruff]
+fix = true
+show-fixes = true
+line-length = 88
+indent-width = 4
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+preview = true
+
+[tool.ruff.lint]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+select = ["I", "E4", "E7", "E9", "F", "B"]
+preview = true
