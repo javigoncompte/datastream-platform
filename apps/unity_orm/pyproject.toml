@@ -3,20 +3,18 @@ name = "unity-orm"
 version = "0.1.0"
 description = "ORM creator and migration tools for Databricks Unity Catalog"
 readme = "README.md"
-authors = [{ name = "jcompte", email = "javiergonzalez7@gmail.com" }]
-requires-python = ">=3.10, <4"
+authors = [{ name = "Javier Gonzalez", email = "javiergonzalez7@gmail.com" }]
+requires-python = ">=3.11"
 dependencies = [
     "databricks-sqlalchemy~=2.0.5",
-    "databricks-connect>=15.4.7",
     "sqlalchemy~=2.0.0",
-    "alembic~=1.13.1",
     "click~=8.1.7",
-    "pydantic~=2.6.0",
     "typing-extensions~=4.9.0",
     "databricks-sql-connector~=4.0.0",
     "inquirer~=3.4.0",
     "sqlacodegen~=3.0.0",
 ]
+license = { file = "../../LICENSE" }
 
 [build-system]
 requires = ["hatchling"]
