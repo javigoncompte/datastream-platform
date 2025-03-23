@@ -1,24 +1,7 @@
-# postmodern-mono
-
-This is an example repo of how to use a [uv Workspace](https://docs.astral.sh/uv/concepts/projects/workspaces/) effectively.
-
-It's a companion to the blog post [Beyond Hypermodern: Python is easy now](https://rdrn.me/postmodern-python/).
-
-And builds on the single-package repo example at [carderne/postmodern-python](https://github.com/carderne/postmodern-python).
-
-## How to use this template
-1. Hit the green `Use this template` button up on the right next to the stars
-2. Give your new repository a name and then clone it to your dev environment.
-3. Run around renaming stuff in the pyproject.toml files.
-4. Run `uv sync --all-packages`
-5. Have a look at the stuff below here, try out some commands and edit this README as you like!
+# DataStream Platform
+libraries and tools/packages to use in data platforms
 
 ## Development
-Clone:
-```bash
-git clone git@github.com:carderne/postmodern-mono.git
-```
-
 Using [uv](https://docs.astral.sh/uv/) for development:
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -32,36 +15,9 @@ uv sync --all-packages
 Read on below...
 
 ## Structure
-There are three packages split into libs and apps:
 - **libs**: importable packages, never run independently, do not have entry points
 - **apps**: have entry points, never imported
 
-Note that neither of these definitions are enforced by anything in Python or `uv`.
-
-```bash
-> tree
-.
-├── pyproject.toml              # root pyproject
-├── uv.lock
-├── libs
-│   └── greeter
-│       ├── pyproject.toml      # package dependencies here
-│       └── postmodern          # all packages are namespaced
-│           └── greeter
-│               └── __init__.py
-└── apps
-    ├── server
-    │   ├── pyproject.toml      # this one depends on libs/greeter
-    │   ├── Dockerfile          # and it gets a Dockerfile
-    │   └── postmodern
-    │       └── server
-    │           └── __init__.py
-    └── mycli
-        ├── pyproject.toml      # this one has a cli entrypoint
-        └── postmodern
-            └── mycli
-                └── __init__.py
-```
 
 ## Docker
 The Dockerfile is at [apps/server/Dockerfile](apps/server/Dockerfile).
