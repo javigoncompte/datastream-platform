@@ -56,11 +56,7 @@ def create_engine(
     if schema:
         logger.info(f"Debug - Schema: {schema}")
 
-    access_token    = os.getenv("DATABRICKS_TOKEN")
-    server_hostname = os.getenv("DATABRICKS_SERVER_HOSTNAME")
-    http_path       = os.getenv("DATABRICKS_HTTP_PATH")
-    catalog         = os.getenv("DATABRICKS_CATALOG")
-    schema          = os.getenv("DATABRICKS_SCHEMA")
+
 
     connect_args = kwargs.setdefault("connect_args", {})
     connect_args.update({"_handle_empty_strings_for_numeric_types": "NULL"})
@@ -91,8 +87,15 @@ def create_engine(
             url_parts.append(f"schema={schema}")
 
         url = "&".join(url_parts)
-    else:
-        url_parts = ["databricks://"]
+    else: 
+        access_token    = os.getenv("DATABRICKS_TOKEN")
+        server_hostname = os.getenv("DATABRICKS_SERVER_HOSTNAME")
+        http_path       = os.getenv("DATABRICKS_HTTP_PATH")
+        catalog         = os.getenv("DATABRICKS_CATALOG")
+        schema          = os.getenv("DATABRICKS_SCHEMA")
+        url_parts = [
+            f"databricks://token:{access_token}@{server_hostname}?http_path={http_path}"
+        ]
 
         params = []
         if catalog:
