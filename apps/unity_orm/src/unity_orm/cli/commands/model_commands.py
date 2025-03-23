@@ -1,5 +1,3 @@
-"""Model generation commands for Unity ORM CLI."""
-
 import os
 from pathlib import Path
 from typing import Optional
@@ -13,7 +11,6 @@ from unity_orm.generators import generate_models_for_catalog_schema
 
 
 def register_commands(cli):
-    """Register model generation commands with the CLI."""
     cli.add_command(generate_models)
     cli.add_command(generate_single)
     cli.add_command(generate_all_catalogs)
@@ -63,7 +60,6 @@ def generate_models(
     output_directory: str = "./src/unity_orm/dataplatform",
     verbose: bool = False,
 ):
-    """Generate SQLAlchemy models from existing Databricks tables."""
     try:
         # Ensure output directory exists
         os.makedirs(output_directory, exist_ok=True)
@@ -71,11 +67,7 @@ def generate_models(
         # If schema is not provided, use "default" as the default schema
         schema_to_use = schema if schema is not None else "default"
 
-        click.echo(
-            style(
-                f"Generating models for {catalog}.{schema_to_use}", fg="blue"
-            )
-        )
+        click.echo(style(f"Generating models for {catalog}.{schema_to_use}", fg="blue"))
         click.echo(
             style(
                 f"Creating dedicated engine for {catalog}.{schema_to_use}",
@@ -162,13 +154,6 @@ def generate_single(
     verbose: bool = False,
     output_directory: str = "./src/unity_orm/dataplatform",
 ):
-    """Generate SQLAlchemy models for a single catalog.schema.
-
-    CATALOG_SCHEMA should be in the format 'catalog.schema'.
-
-    Example:
-        unity-orm generate-single main.default
-    """
     # Parse catalog.schema format
     if "." not in catalog_schema:
         click.echo(
@@ -183,9 +168,7 @@ def generate_single(
     catalog, schema = catalog_schema.split(".", 1)
 
     if not catalog or not schema:
-        click.echo(
-            style("Error: Both catalog and schema must be provided", fg="red")
-        )
+        click.echo(style("Error: Both catalog and schema must be provided", fg="red"))
         click.echo("Example: unity-orm generate-single main.default")
         return
 
@@ -200,7 +183,6 @@ def generate_single(
         click.echo(f"Output directory: {schema_output_dir}")
 
     try:
-        # Get authentication configuration from current session if not provided
         if not access_token or not server_hostname or not http_path:
             click.echo("Using Databricks Connect authentication...")
             try:
@@ -209,9 +191,7 @@ def generate_single(
                 if not access_token:
                     access_token = config.token
                     if verbose:
-                        click.echo(
-                            "Using access token from Databricks Connect"
-                        )
+                        click.echo("Using access token from Databricks Connect")
 
                 if not server_hostname:
                     server_hostname = config.host
@@ -240,7 +220,6 @@ def generate_single(
                     click.echo(traceback.format_exc())
                 return
 
-        # Validate all required parameters are present
         if not access_token or not server_hostname or not http_path:
             click.echo(
                 style(
@@ -248,15 +227,11 @@ def generate_single(
                     fg="red",
                 )
             )
-            click.echo(
-                "Please provide access_token, server_hostname, and http_path"
-            )
+            click.echo("Please provide access_token, server_hostname, and http_path")
             return
 
         click.echo(
-            style(
-                f"Creating dedicated engine for {catalog}.{schema}", fg="blue"
-            )
+            style(f"Creating dedicated engine for {catalog}.{schema}", fg="blue")
         )
 
         # Generate models with a dedicated engine for this catalog.schema
@@ -304,11 +279,8 @@ def generate_single(
 
 
 def get_filtered_catalogs(all_catalog_names, show_all, debug, no_filter):
-    """Filter catalog names based on filtering options."""
     if no_filter:
-        click.echo(
-            style("No filtering applied (--no-filter option)", fg="green")
-        )
+        click.echo(style("No filtering applied (--no-filter option)", fg="green"))
         return all_catalog_names, [], []
 
     # Filter catalogs - use complete list of env prefixes
@@ -335,7 +307,6 @@ def get_filtered_catalogs(all_catalog_names, show_all, debug, no_filter):
 
 
 def get_filtered_schemas(all_schema_names, include_all_schemas):
-    """Filter schema names based on filtering options."""
     if include_all_schemas:
         return [s for s in all_schema_names if s != "information_schema"]
 
@@ -361,7 +332,6 @@ def process_schema(
     http_path,
     verbose,
 ):
-    """Process a single schema and generate models."""
     if schema_name == "information_schema":
         # Skip information_schema as it's system tables
         return True
@@ -414,7 +384,6 @@ def process_catalog_schemas(
     include_all_schemas,
     verbose,
 ):
-    """Process all schemas in a catalog and return success status."""
     click.echo(f"Fetching schemas for catalog: {catalog_name}")
 
     try:
@@ -473,7 +442,6 @@ def process_catalog_schemas(
 
 
 def fetch_schemas(spark, catalog_name):
-    """Fetch schemas with retry on session failure."""
     try:
         return spark.sql(f"SHOW SCHEMAS IN {catalog_name}").collect()
     except Exception as e:
@@ -486,7 +454,6 @@ def fetch_schemas(spark, catalog_name):
 
 
 def verify_authentication(access_token, server_hostname, http_path, verbose):
-    """Verify authentication parameters, using Databricks Connect if needed."""
     if access_token and server_hostname and http_path:
         return access_token, server_hostname, http_path
 
@@ -539,7 +506,6 @@ def print_summary(
     skipped_catalogs,
     base_output_directory,
 ):
-    """Print a summary of the catalog processing results."""
     click.echo(
         style(
             "\n===== Multi-Catalog Model Generation Summary =====",
@@ -547,14 +513,8 @@ def print_summary(
             bold=True,
         )
     )
-    click.echo(
-        style(f"Total catalogs processed: {len(filtered_catalogs)}", fg="blue")
-    )
-    click.echo(
-        style(
-            f"Successfully processed: {len(successful_catalogs)}", fg="green"
-        )
-    )
+    click.echo(style(f"Total catalogs processed: {len(filtered_catalogs)}", fg="blue"))
+    click.echo(style(f"Successfully processed: {len(successful_catalogs)}", fg="green"))
 
     if successful_catalogs:
         click.echo(style("Successfully processed catalogs:", fg="green"))
@@ -562,18 +522,14 @@ def print_summary(
             click.echo(f"  - {catalog}")
 
     if failed_catalogs:
-        click.echo(
-            style(f"Failed to process: {len(failed_catalogs)}", fg="red")
-        )
+        click.echo(style(f"Failed to process: {len(failed_catalogs)}", fg="red"))
         click.echo(style("Failed catalogs:", fg="red"))
         for catalog in failed_catalogs:
             click.echo(f"  - {catalog}")
 
     if skipped_catalogs:
         click.echo(style(f"Skipped: {len(skipped_catalogs)}", fg="yellow"))
-        click.echo(
-            style("Skipped catalogs (no suitable schemas):", fg="yellow")
-        )
+        click.echo(style("Skipped catalogs (no suitable schemas):", fg="yellow"))
         for catalog in skipped_catalogs:
             click.echo(f"  - {catalog}")
 
@@ -645,12 +601,6 @@ def generate_all_catalogs(
     include_all_schemas: bool = True,
     verbose: bool = False,
 ):
-    """Generate models for all available catalogs based on filtering options.
-
-    This command automatically processes all catalogs that match your filtering criteria.
-    By default, it filters out system catalogs (starting with __) and environment-specific
-    catalogs (starting with qa_, test_, etc). Use --show-all and --debug to modify filtering.
-    """
     click.echo(
         style(
             "\n🔍 Unity ORM Multi-Catalog Model Generator",
@@ -664,11 +614,7 @@ def generate_all_catalogs(
     try:
         # Create Databricks session for authentication and queries
         click.echo("\nConnecting to Databricks...")
-        spark = (
-            DatabricksSession.builder.serverless(True)
-            .profile("qa")
-            .getOrCreate()
-        )
+        spark = DatabricksSession.builder.serverless(True).profile("qa").getOrCreate()
         click.echo(style("✓ Connected to Databricks", fg="green"))
 
         # Get catalogs from Databricks
@@ -695,10 +641,8 @@ def generate_all_catalogs(
                 click.echo(f"  {i + 1}. {catalog}")
 
         # Get filtered catalogs
-        filtered_catalogs, dunder_filtered, env_filtered = (
-            get_filtered_catalogs(
-                all_catalog_names, show_all, debug, no_filter
-            )
+        filtered_catalogs, dunder_filtered, env_filtered = get_filtered_catalogs(
+            all_catalog_names, show_all, debug, no_filter
         )
 
         # Report filtering stats
@@ -709,9 +653,7 @@ def generate_all_catalogs(
                     fg="yellow",
                 )
             )
-            click.echo(
-                style("Use --debug to include system catalogs", fg="yellow")
-            )
+            click.echo(style("Use --debug to include system catalogs", fg="yellow"))
 
         if env_filtered:
             click.echo(
@@ -765,9 +707,7 @@ def generate_all_catalogs(
                     fg="red",
                 )
             )
-            click.echo(
-                "Please provide access_token, server_hostname, and http_path"
-            )
+            click.echo("Please provide access_token, server_hostname, and http_path")
             return
 
         # Ask for confirmation before proceeding
@@ -798,9 +738,7 @@ def generate_all_catalogs(
                     bold=True,
                 )
             )
-            catalog_output_dir = str(
-                Path(base_output_directory) / catalog_name
-            )
+            catalog_output_dir = str(Path(base_output_directory) / catalog_name)
 
             try:
                 result = process_catalog_schemas(
@@ -835,9 +773,7 @@ def generate_all_catalogs(
                 failed_catalogs.append(catalog_name)
 
             click.echo(
-                style(
-                    f"Completed processing catalog: {catalog_name}", fg="blue"
-                )
+                style(f"Completed processing catalog: {catalog_name}", fg="blue")
             )
             click.echo(style("-" * 50, fg="blue"))
 
