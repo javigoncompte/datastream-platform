@@ -2,7 +2,7 @@
 
 from typing import Any, Optional
 from urllib.parse import quote_plus, urlparse
-
+import os
 from sqlalchemy import create_engine as sa_create_engine
 
 # ruff: noqa
@@ -55,6 +55,12 @@ def create_engine(
         logger.info(f"Debug - Catalog: {catalog}")
     if schema:
         logger.info(f"Debug - Schema: {schema}")
+
+    access_token    = os.getenv("DATABRICKS_TOKEN")
+    server_hostname = os.getenv("DATABRICKS_SERVER_HOSTNAME")
+    http_path       = os.getenv("DATABRICKS_HTTP_PATH")
+    catalog         = os.getenv("DATABRICKS_CATALOG")
+    schema          = os.getenv("DATABRICKS_SCHEMA")
 
     connect_args = kwargs.setdefault("connect_args", {})
     connect_args.update({"_handle_empty_strings_for_numeric_types": "NULL"})
