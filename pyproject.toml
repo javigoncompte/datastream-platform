@@ -1,35 +1,23 @@
-[tool.poe.tasks]
-# run with eg `uv run poe fmt`
-fmt = "ruff format ${PWD}"
-lint = "ruff check --fix ${PWD}"
-check = "basedpyright ${PWD}"
-test = "pytest ${PWD}"
-# run all the above
-all = [{ ref = "fmt" }, { ref = "lint" }, { ref = "check" }, { ref = "test" }]
-
-echo = "echo ${PWD}"
-
-"ci:fmt" = "ruff format --check ${PWD}" # fail if not formatted
-"ci:lint" = "ruff check ${PWD}"
-
 [project]
 name = "datastream-platform"
 version = "0.1.0"
-description = "Datastream Platform"
-readme = "README.md"
-requires-python = ">=3.11"
-dependencies = []
+requires-python = "~=3.11"
 
 [dependency-groups]
 dev = [
-    "basedpyright >= 1.23.1",
-    "poethepoet>=0.32.0",
-    "pytest >= 8.3.4",
-    "ruff >= 0.9.9",
+    "basedpyright>=1.29.0",
+    "pytest>=8.3.4",
+    "ruff>=0.11.6",
+    "pip>=25.0.1",
+    "una>=0.6.1",
+    "polars>=1.27.1",
 ]
+[tool.una]
+namespalce = "dataplatform"
+requires-python = "~= 3.11.9"
 
 [tool.uv.workspace]
-members = ["libs/*", "apps/*"]
+members = ["libs/*", "packages/*", "platform/*"]
 
 [tool.ruff]
 fix = true
@@ -43,8 +31,28 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 preview = true
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.basedpyright]
+pythonVersion = "3.11"
+reportMissingTypeStubs = "none"
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportAttributeAccessIssue = "hint"
+reportUnknownArgumentType = "warning"
+reportImplicitOverride = "none"
 
 [tool.ruff.lint]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-select = ["I", "E4", "E7", "E9", "F", "B"]
+select = ["I", "E4", "E7", "E9", "F", "B", "T100", "N", "A"]
 preview = true
+ignore = ["D417", "D100", "D101"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["dataplatform"]
+
+[tool.pytest.ini_options]
+pythonpath = ["libs/*", "packages/*", "platform/*"]
+testpaths = ["libs/*", "packages/*", "platform/*"]
+addopts = ""

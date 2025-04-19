@@ -1,0 +1,26 @@
+[project]
+name = "unity-catalog"
+version = "0.1.0"
+description = "Unity Catalog Library for a Data Platform"
+authors = []
+requires-python = "~=3.11"
+dynamic = ["una"]
+dependencies = ["fastcore>=1.8.1", "httpx>=0.28.1"]
+
+[project.optional-dependencies]
+databricks = ["databricks-connect~=16.1.3"]
+sparkconnect = ["pyspark[connect]~=3.5.5"]
+deltars = ["deltalake~=0.25.5"]
+
+[build-system]
+requires = ["hatchling", "hatch-una>=0.5.1"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["basedpyright>=1.29.0", "pytest>=8.3.4", "ruff>=0.11.6"]
+[tool.uv]
+default-groups = ["dev"]
+[tool.uv.sources]
+
+[tool.hatch.build.hooks.una-build]
+[tool.hatch.metadata.hooks.una-meta]
