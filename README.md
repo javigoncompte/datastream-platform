@@ -15,8 +15,9 @@ uv sync --all-packages
 Read on below...
 
 ## Structure
-- **libs**: importable packages, never run independently, do not have entry points
-- **apps**: have entry points, never imported
+- **libs**: importable libraries, never run independently, do not have entry points
+- **packages**: packages that can run independently. Might have entry points
+- **platform**: platform related importable libraries. Manging a Data Platform
 
 
 ## Docker
@@ -52,7 +53,7 @@ alias uvs="uv sync --all-packages
 ```
 
 ## Dependencies
-You'll notice that `apps/mycli` has `urllib3` as a dependency.
+You'll notice that `packages/` has `x` as a dependency.
 Because of this, _every_ package in the workspace is able to import `urllib3` **in local development**,
 even though they don't include it as a direct or transitive dependency.
 
@@ -77,52 +78,12 @@ to keep things in sync.
 The reason they have to be repeated, is that if you follow the example above and install only
 a specific package, it won't include anything specified in the root package.
 
-## Tasks/scripts
-[Poe the Poet](https://poethepoet.natn.io/index.html) is used until uv includes its own task runner.
 
-Tasks are defined in the root pyproject.toml, mostly running again `${PWD}` so that if
-you run a task from within a package, it'll only run for that package.
-
-You can run the tasks as follows:
-```bash
-uv run poe fmt
-           lint
-           check
-           test
-
-# or to run them all
-uv run poe all
-```
-
-If you run any of these from the workspace root, it will run for all packages,
-whereas if you run them inside a package, they'll run for only that package.
-
-## Testing
-This repo includes a simple pytest test for each package.
-
-To test all packages:
-```bash
-uv sync --all-packages
-uv run poe test
-```
-
-To test a single package:
-```bash
-cd apps/server
-uv sync
-uv run poe test
-```
 
 ## Pyright
 (This repo actually uses [basedpyright](https://docs.basedpyright.com/latest/).
 
-The following needs to be included with every package `pyproject.toml`:
-```toml
-[tool.pyright]
-venvPath = "../.."       # point to the workspace root where the venv is
-venv = ".venv"
-strict = ["**/*.py"]
-pythonVersion = "3.13"
-```
 
-Then you can run `uv run poe check` as for tests.
+## Una for building wheels on Packages
+
+`uvx --from build pyproject-build --installer uv`
