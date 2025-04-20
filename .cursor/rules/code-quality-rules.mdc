@@ -1,0 +1,65 @@
+---
+description: General Code quality Standards
+globs: *.py
+alwaysApply: false
+---
+ # Code Quality Rules
+
+<rule>
+name: code_quality_standards
+description: General code quality standards for all Python projects
+
+filters:
+  - type: file_extension
+    pattern: "\\.py$"
+
+actions:
+  - type: suggest
+    message: |
+      When writing Python code:
+      
+      1. Type Safety:
+         - Use type hints
+         - Implement proper validation
+         - Use dataclasses/pydantic models
+         - basedpyright 
+         
+      2. Error Handling:
+         - Use tiger-style error handling
+         - Implement proper logging
+         - Use custom exceptions
+        - Use try-except blocks for error-prone operations
+        - Implement proper logging
+          - we have a decorator in client library
+        - Use custom exceptions for specific error cases
+        - Implement proper input validation
+        - Handle API rate limits and timeouts
+        - Use tiger style if possible to handle errors and make code efficient
+         
+      3. Code Structure:
+         - Follow functional programming principles
+         - Implement proper abstraction
+         - Concise and simple made easy
+         - Use descriptive names
+
+examples:
+  - input: |
+      # Bad: No type hints or validation
+      def process_data(data):
+          return data.transform()
+      
+      # Good: Proper type hints and validation
+      from typing import TypeVar, Generic
+      
+      T = TypeVar('T')
+      
+      def process_data(data: DataFrame[T]) -> DataFrame[T]:
+          if not isinstance(data, DataFrame):
+              raise ValueError("Expected DataFrame input")
+          return data.transform()
+    output: "Correctly implemented function with type safety"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

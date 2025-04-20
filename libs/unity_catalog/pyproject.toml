@@ -5,7 +5,11 @@ description = "Unity Catalog Library for a Data Platform"
 authors = []
 requires-python = "~=3.11"
 dynamic = ["una"]
-dependencies = ["fastcore>=1.8.1", "httpx>=0.28.1"]
+dependencies = [
+    "databricks-sqlalchemy>=2.0.5",
+    "fastcore>=1.8.1",
+ "httpx>=0.28.1",
+]
 
 [project.optional-dependencies]
 databricks = ["databricks-connect~=16.1.3"]
