@@ -1,0 +1,50 @@
+---
+description: Standards for data engineering projects using Databricks, PySpark, and Polars
+globs: */**.py
+alwaysApply: true
+---
+ # Data Engineering Rules
+
+<rule>
+name: data_engineering_standards
+description: Standards for data engineering projects using Databricks, PySpark, and Polars
+
+filters:
+  - type: directory
+    pattern: "src/projects/**"
+  - type: file_extension
+    pattern: "\\.py$"
+
+actions:
+  - type: suggest
+    message: |
+      When writing data engineering code:
+      
+      1. Use vectorized operations:
+         - Prefer Polars/Spark DataFrame operations
+         - Avoid explicit loops
+         
+      2. Implement proper error handling:
+         - Use custom exceptions
+         - Implement proper validation
+         
+      3. Follow data platform best practices:
+         - Use efficient data types
+         - Implement proper logging
+         - Create reusable pipelines
+         - 
+
+examples:
+  - input: |
+      # Bad: Row-by-row processing
+      for row in df.iterrows():
+          process_row(row)
+      
+      # Good: Vectorized operation
+      df.select(pl.col("column").map_elements(process_row))
+    output: "Correctly implemented vectorized operation"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

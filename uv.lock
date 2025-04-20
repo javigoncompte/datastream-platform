@@ -1114,6 +1114,7 @@ name = "unity-catalog"
 version = "0.1.0"
 source = { editable = "libs/unity_catalog" }
 dependencies = [
+    { name = "databricks-sqlalchemy" },
     { name = "fastcore" },
     { name = "httpx" },
 ]
@@ -1139,6 +1140,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "databricks-connect", marker = "extra == 'databricks'", specifier = "~=16.1.3" },
+    { name = "databricks-sqlalchemy", specifier = ">=2.0.5" },
     { name = "deltalake", marker = "extra == 'deltars'", specifier = "~=0.25.5" },
     { name = "fastcore", specifier = ">=1.8.1" },
     { name = "httpx", specifier = ">=0.28.1" },

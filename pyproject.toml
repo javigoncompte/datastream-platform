@@ -36,18 +36,22 @@ convention = "google"
 
 [tool.basedpyright]
 pythonVersion = "3.11"
-reportMissingTypeStubs = "none"
 reportUnknownMemberType = false
 reportUnknownVariableType = false
 reportAttributeAccessIssue = "hint"
 reportUnknownArgumentType = "warning"
 reportImplicitOverride = "none"
+reportRedeclaration = "none"
+reportUnusedCallResult = "none"
+reportExplicitAny = "none"
+reportUnannotatedClassAttribute = "none"
+reportUninitializedInstanceVariable = "warning"
 
 [tool.ruff.lint]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 select = ["I", "E4", "E7", "E9", "F", "B", "T100", "N", "A"]
 preview = true
-ignore = ["D417", "D100", "D101"]
+ignore = ["D417", "D100", "D101", "N812"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["dataplatform"]

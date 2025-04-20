@@ -1,0 +1,177 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Data platform guiding principles and values
+---
+
+# Data Platform Rules
+<rule>
+name: data_platform_rules
+description: Data Platform guiding principles and values
+
+
+## Internal Libraries Structure
+
+All internal libraries are located in `src/libraries` with the following structure:
+
+- `client`: Core client library and utilities
+- `common`: Shared utilities and common functionality
+- `business_core`: Core business logic and domain models
+- `ingestion`: Data ingestion frameworks and utilities
+- `streaming`: Streaming data processing utilities
+- `interfaces`: Protocol and ABC interfaces for package integration
+
+### Library Reference Rules
+
+1. Library Structure Pattern:
+   ```
+   src/libraries/(library_name)_src/(library_name)/
+   ```
+   Example: `src/libraries/client_src/client/`
+
+2. Import Pattern:
+   Libraries are imported directly by their name:
+   ```python
+   import client
+   # or
+   from client import logs
+   ```
+
+3. Library Dependencies:
+   - `client`: Base library that others can depend on
+   - `common`: Can depend on client
+   - `business_core`: Can depend on client and common
+   - `ingestion`: Can depend on client, common, and interfaces
+   - `streaming`: Can depend on client, common, and interfaces
+   - `interfaces`: Should have minimal dependencies interface on protocols python for preventing cirucular dependencies
+
+### Code Organization
+
+1. Library Structure:
+   ```
+   src/libraries/
+   ├── client_src/
+   │   └── client/
+   │       ├── __init__.py
+   │       ├── core.py
+   │       └── utils.py
+   ├── common_src/
+   │   └── common/
+   │       ├── __init__.py
+   │       ├── core.py
+   │       └── utils.py
+   ├── business_core_src/
+   │   └── business_core/
+   │       ├── __init__.py
+   │       ├── core.py
+   │       └── utils.py
+   ```
+
+2. Each library should have:
+   - README.md
+   - requirements.txt
+   - setup.py
+   - tests directory
+   - proper __init__.py for clean imports
+
+### Function Reuse and Discovery
+
+1. Before implementing new functionality, search existing libraries in this order:
+   - `common`: Generic utilities and shared functions
+   - `client`: Core client functionality
+   - Other specific libraries based on functionality
+
+2. Common Function Locations:
+   - Data manipulation: `common/utils`
+   - File operations: `client/file_system.py`
+   - Logging: `client/logs`
+   - Error handling: `client/exceptions`
+   - Configuration: `client/const.py`
+   - Database operations: `client/data_lake_client.py`
+
+3. Search Patterns:
+   - Search by function name: `function_name`
+   - Search by functionality: `# Purpose: <functionality>`
+   - Search by type hints: `def function_name(param: type)`
+   - Search docstrings: `"""<functionality>"""`
+
+4. Priority Search Locations:
+   ```
+   src/libraries/common_src/common/utils/
+   src/libraries/client_src/client/util/
+   src/libraries/client_src/client/util_spark/
+   src/libraries/{library}_src/{library}/utils/
+   ```
+
+### Quality Standards
+
+1. Testing Requirements:
+   - Unit tests for all public interfaces
+   - Integration tests for library interactions
+   - 80% minimum code coverage
+
+2. Documentation:
+   - API documentation in docstrings
+   - Usage examples in README
+   - Architecture decisions in ADR
+
+3. Error Handling:
+   - Custom exceptions per library
+   - Proper error propagation
+   - Comprehensive error messages
+
+filters:
+  - type: file
+    pattern: "**/*.py"
+  - type: content
+    pattern: "import|from.*import|def\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*\\("
+
+actions:
+  - type: validate
+    description: "Validate library imports and function definitions"
+    script: |
+      import re
+      
+      def validate_library_imports(file_content):
+          # Pattern to match imports that use the full path instead of direct library name
+          incorrect_pattern = r'from\s+src\.libraries\.|import\s+src\.libraries\.'
+          incorrect_imports = re.findall(incorrect_pattern, file_content)
+          if incorrect_imports:
+              return False, "Libraries should be imported directly by name (e.g., 'import client' or 'from client import logs')"
+          return True, None
+
+  - type: suggest
+    message: |
+      Before implementing new functions:
+      
+      1. Search Common Locations:
+         - common/* for generic utilities
+         
+      2. Search Patterns:
+         - Function name: `function_name`
+         - function code: `function_code` 
+         - Purpose comments: `# Purpose: <functionality>`
+         - Type hints: `def function_name(param: type)`
+         - Docstrings: `"""<functionality>"""`
+      
+      3. Import existing functions:
+         ```python
+         from common.data_frame import dedupe_using_window 
+         ```
+      
+      Current internal libraries:
+      - client
+      - common
+      - business_core
+      - ingestion
+      - streaming
+      - interfaces
+
+metadata:
+  version: 1.0
+  priority: high
+  tags: ["libraries", "imports", "architecture", "code-reuse"]
+</rule>
