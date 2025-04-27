@@ -8,7 +8,8 @@ dynamic = ["una"]
 dependencies = [
     "databricks-sqlalchemy>=2.0.5",
     "fastcore>=1.8.1",
- "httpx>=0.28.1",
+    "httpx>=0.28.1",
+    "unitycatalog-client>=0.2.1",
 ]
 
 [project.optional-dependencies]

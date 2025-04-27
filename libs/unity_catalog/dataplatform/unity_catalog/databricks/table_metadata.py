@@ -73,6 +73,8 @@ class DeltaMetadataProvider:
         "delta.dataSkippingNumIndexedCols": TablePropertyType.INTEGER,
         "delta.deletedFileRetentionDuration": TablePropertyType.STRING,
         "delta.logRetentionDuration": TablePropertyType.STRING,
+        "delta.minReaderVersion": TablePropertyType.INTEGER,
+        "delta.minWriterVersion": TablePropertyType.INTEGER,
         INGESTION_PATTERN_KEY: TablePropertyType.STRING,
     }
 
