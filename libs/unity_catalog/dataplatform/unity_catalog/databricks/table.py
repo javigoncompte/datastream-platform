@@ -33,16 +33,12 @@ class Table(GetAttr):
         # Using table name
         table = Table("catalog.schema.my_table")
 
-        from sqlalchemy import select
-        from models.catalog.schema.base import Account
-        account = Table(Account)
-        select(account).where(account.id == 1)
         ```
     """
 
-    def _(self, name: str):  # pyright: ignore[reportUnusedParameter]
+    def __init__(self, name: str):
         store_attr()
-        self.spark: SparkSession = (  # pyright: ignore[reportUninitializedInstanceVariable]
+        self.spark: SparkSession = (  # type: ignore[reportUninitializedInstanceVariable]
             Spark().spark_session
         )
 
