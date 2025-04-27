@@ -17,9 +17,9 @@ class DeltaWriteMode(Enum):
 class DeltaDeleteMode(Enum):
     """Enum for different delete modes in Delta Lake"""
 
-    HARD = "hard"  # Physical deletion
-    SOFT = "soft"  # Logical deletion (mark as deleted)
-    NONE = "none"  # No deletion
+    HARD = "hard"
+    SOFT = "soft"
+    NONE = "none"
 
 
 @dataclass

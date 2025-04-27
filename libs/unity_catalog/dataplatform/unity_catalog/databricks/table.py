@@ -1,4 +1,4 @@
-from functools import cached_property, singledispatchmethod
+from functools import cached_property
 from typing import Any, TypeVar
 
 from delta.tables import DeltaTable
@@ -7,7 +7,6 @@ from fastcore.basics import GetAttr
 from pyspark.sql import Column, DataFrame, SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import StructType
-from sqlalchemy.schema import Table as SqlAlchemyTable
 
 from .deltalake import DeltaDeleteMode, DeltaMergeConfig, DeltaWriteMode
 from .spark import Spark
@@ -41,31 +40,11 @@ class Table(GetAttr):
         ```
     """
 
-    _default = "orm_model"
-
-    @singledispatchmethod
-    def __init__(self, arg):  # pyright: ignore[reportUnknownParameterType, reportMissingParameterType ]
-        raise NotImplementedError("Subclass must implement this method")
-
-    @__init__.register
     def _(self, name: str):  # pyright: ignore[reportUnusedParameter]
         store_attr()
         self.spark: SparkSession = (  # pyright: ignore[reportUninitializedInstanceVariable]
             Spark().spark_session
         )
-        self.model: SqlAlchemyTable | None = None  # pyright: ignore[reportUninitializedInstanceVariable]
-
-    @__init__.register
-    def _(self, table: SqlAlchemyTable):
-        self.spark: SparkSession = Spark().spark_session
-        self.model: SqlAlchemyTable = table
-
-        table_info: dict[str, Any] = table.__info__
-        table_fullname = table_info.get("fullname", None)
-        if table_fullname:
-            self.name = table_fullname
-        else:
-            raise ValueError(f"Table {table} must have __info__['fullname'] attribute")
 
     def __repr__(self) -> str:
         return f"Table(name={self.name})"
@@ -82,23 +61,17 @@ class Table(GetAttr):
     @property
     def primary_keys(self) -> list[str]:
         """Get primary key columns from ORM model if available, otherwise from metadata."""
-        if not isinstance(self.model, SqlAlchemyTable):
-            return self.metadata.primary_keys
-
-        try:
-            return [col.name for col in self.model.primary_key]
-        except (ImportError, AttributeError):
-            return self.metadata.primary_keys
+        return self.metadata.primary_keys
 
     def set_property(
         self, key: str, value: Any, property_type: TablePropertyType | None = None
     ) -> None:
         """Set a table property."""
-        self._metadata_provider.set_property(key, value, property_type)
+        self.metadata.set_property(key, value, property_type)
 
     def unset_property(self, key: str) -> None:
         """Unset a table property."""
-        self._metadata_provider.unset_property(key)
+        self.metadata.unset_property(key)
 
     def read(self) -> DataFrame:
         """Get a DataFrame representation of this Delta table."""
@@ -383,3 +356,43 @@ class Table(GetAttr):
             raise ValueError(
                 "Either version_as_of or timestamp_as_of must be specified"
             )
+
+    def merge_with_keys(
+        self,
+        source_df: DataFrame,
+        update_columns: dict[str, str | Column] | None = None,
+        enable_hard_delete: bool = False,
+        merge_options: dict[str, str] | None = None,
+    ) -> None:
+        """
+        Merge source DataFrame into table using primary keys with optional hard deletes.
+
+        Args:
+            source_df: Source DataFrame to merge
+            update_columns: Optional dict of column updates for matched rows. If None, updates all columns
+            enable_hard_delete: Whether to delete records not in source
+            merge_options: Additional merge options like 'mergeSchema'
+        """
+        merge_condition = " AND ".join([
+            f"target.{pk} = source.{pk}" for pk in self.primary_keys
+        ])
+
+        merge_builder = self.delta_table.alias("target").merge(
+            source=source_df.alias("source"), condition=merge_condition
+        )
+
+        if update_columns:
+            merge_builder = merge_builder.whenMatchedUpdate(set=update_columns)
+        else:
+            merge_builder = merge_builder.whenMatchedUpdateAll()
+
+        if enable_hard_delete:
+            merge_builder = merge_builder.whenNotMatchedBySourceDelete()
+
+        merge_builder = merge_builder.whenNotMatchedInsertAll()
+
+        if merge_options:
+            for k, v in merge_options.items():
+                self.spark.conf.set(k, v)
+
+        merge_builder.execute()
