@@ -1,0 +1,20 @@
+---
+description: 
+globs: libs/evalgen/**/*.py
+alwaysApply: false
+---
+---
+description: Rules for implementing common UI elements in MonsterUI idiomatically
+alwaysApply: false
+---
+When you want to create new UI components or design with MonsterUI leverage the following resources.
+
+When creating UI elements create idiomatic MonsterUI as shown in any of the examples provided that minimizes code duplication and vertical space.
+
+Common cases:
+- For Card based designs see for lots of card examples: [ui_cards.md](mdc:libs/evalgen/dataplatform/evalgen/evalgen_app/ref_docs/ui_cards.md)
+- For exampleorms and user inputs see  for lots examples: [ui_forms.md](mdc:libs/evalgen/dataplatform/evalgen/evalgen_app/ref_docs/ui_forms.md)
+- For exaples of tables, which are great for lists of things that have actions see [ui_tables.md](mdc:libs/evalgen/dataplatform/evalgen/evalgen_app/ref_docs/ui_tables.md)
+- For the API reference see [monsterui_api.md](mdc:libs/evalgen/dataplatform/evalgen/evalgen_app/ref_docs/monsterui_api.md)
+
+For all examples [monsterui-llms-ctx.txt](mdc:src/libraries/evalgen_src/evalgen/evalgen_app/ref_docs/monsterui-llms-ctx.txt) that covers anything elmay need.  Include this fog tricky or complicated

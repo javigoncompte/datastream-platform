@@ -1,7 +1,7 @@
 ---
-description: Cursor Rules Location And creating cursor rules
+description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Cursor Rules Location

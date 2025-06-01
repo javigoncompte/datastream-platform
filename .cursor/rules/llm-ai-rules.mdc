@@ -1,0 +1,67 @@
+---
+description: LLM and AI relevant rules
+globs: 
+alwaysApply: false
+---
+ # LLM/AI Development Rules
+actions:
+  - type: suggest
+    message: |
+      When implementing LLM/AI applications:
+      
+      1. LLM Integration:
+         - Implement proper prompt engineering
+         - Use appropriate model settings
+         - Handle token limits
+         
+      2. Application Patterns:
+         - Implement proper caching
+         - Use rate limiting
+         - Handle API errors gracefully
+         
+      3. Evaluation:
+         - Implement proper testing
+         - Use pairwise comparisons
+         - Handle position bias
+
+      
+      4. Considerations
+        - LLM-as-Judge can work (somewhat), but its not a silver bullet
+        - Use pairwise comparisons: Instead of asking the LLM to score a single output on a Likert scale, present it with two options and ask it to select the better one. This tends to lead to more stable results.
+        - Control for position bias: The order of options presented can bias the LLMs decision. To mitigate this, do each pairwise comparison twice, swapping the order of pairs each time. Just be sure to attribute wins to the right option after swapping!
+        - Allow for ties: In some cases, both options may be equally good. Thus, allow the LLM to declare a tie so it doesnt have to arbitrarily pick a winner.
+        - Control for response length: LLMs tend to bias toward longer responses. To mitigate this, ensure response pairs are similar in length.
+        - Use Chain-of-Thought: Asking the LLM to explain its decision before giving a final answer can increase eval reliability. As a bonus, this lets you to use a weaker but faster LLM and still achieve similar results. Because this part of the pipeline is typically run in batch, the extra latency from CoT isnt a problem.
+      5. Transformers:
+        - Use the Transformers library for working with pre-trained models and tokenizers.
+        - Implement attention mechanisms and positional encodings correctly.
+        - Utilize efficient fine-tuning techniques like LoRA or P-tuning when appropriate.
+        - Implement proper tokenization and sequence handling for text data.
+
+
+
+examples:
+  - input: |
+      # Bad: No error handling or rate limiting
+      def get_completion(prompt):
+          return llm(prompt)
+      
+      # Good: Proper LLM call implementation
+      @rate_limit(rpm=60)
+      async def get_completion(prompt: str) -> str:
+          try:
+              response = await llm.agenerate(
+                  prompt,
+                  max_tokens=1000,
+                  temperature=0.7
+              )
+              return response.generations[0].text
+          except LLMError as e:
+              logger.error(f"LLM call failed: {e}")
+              raise
+    output: "Correctly implemented LLM call with proper error handling"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>
