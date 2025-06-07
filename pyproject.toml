@@ -12,6 +12,7 @@ dev = [
     "una>=0.6.1",
     "polars>=1.27.1",
     "duckdb>=1.2.2",
+    "marimo>=0.13.15",
 ]
 [tool.una]
 namespalce = "dataplatform"
