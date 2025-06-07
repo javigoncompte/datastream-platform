@@ -92,15 +92,15 @@ def clear_all_labeling_sessions(review: review_app.ReviewApp):
 
 
 def annotation_session(run_id: str) -> review_app.LabelingSession:
-    _, mflow_client = init_mlflow("/experiments/evalgen_annotation")
+    _ = init_mlflow("/experiments/evalgen_annotation")
     review = get_review_app("/experiments/evalgen_annotation")
     clear_all_labeling_sessions(review)
     traces: pd.DataFrame = mlflow.search_traces(run_id=run_id, return_type="pandas")  # type: ignore
     timestamp_filter = int(
         (datetime.datetime.now() - datetime.timedelta(minutes=10)).timestamp() * 1000
     )
-    traces_df = traces[traces["timestamp_ms"] >= timestamp_filter]  # type: ignore
-
+    trace_timestamps: pd.Series = traces["timestamp_ms"]
+    traces_df: pd.DataFrame = traces[trace_timestamps >= timestamp_filter]  # type: ignore
     user_name = get_user_name()
     label_schema = review.create_label_schema(
         name="good_response",
@@ -117,8 +117,7 @@ def annotation_session(run_id: str) -> review_app.LabelingSession:
         label_schemas=[label_schema.name],
     )
     labeling_session.add_traces(traces_df)
-    log.info(f"Annotation session created: {labeling_session.url}")
-    print(labeling_session.url)
+    log.info(f"Annotation session created url: {labeling_session.url}")
     return labeling_session
 
 
