@@ -1,3 +1,6 @@
+import logging
+from typing import Any
+
 import mlflow
 from databricks_langchain import ChatDatabricks
 from langchain_core.prompts import (
@@ -7,15 +10,15 @@ from langchain_core.prompts import (
 from mlflow.deployments import get_deploy_client
 from pydantic import BaseModel
 
-from evalgen.label import init_mlflow
+from dataplatform.evalgen.databricks_integration import init_mlflow
 
 
 class TestCase(BaseModel):
     feature: str
     scenario: str
-    constraints: list[str]
     persona: str
-    assumptions: list[str]
+    constraints: list[str] | None = []
+    assumptions: list[str] | None = []
     test_case_prompt: str | None = None
     test_case_output: str | None = None
 
@@ -25,19 +28,33 @@ def get_test_case_output(
     prompt: str,
     experiment_name: str,
 ) -> str:
+    log = logging.getLogger("mlflow")
     mlflow.autolog()
     deploy_client = get_deploy_client("databricks")
     input_data = {"messages": [{"role": "user", "content": prompt}]}
 
     mlflow.log_param("prompt", prompt)
     mlflow.log_param("experiment_name", experiment_name)
-    response = deploy_client.predict(endpoint=endpoint_name, inputs=input_data)  # type: ignore
-    if response:
-        choices = response["choices"]
-        *_, last_choice = choices  # type: ignore
-        return str(last_choice["message"]["content"])
-    else:
-        return "No response from agent"
+    match deploy_client:
+        case None:
+            raise ValueError(
+                "Deploy Client has not been set please check your environment variables"
+            )
+        case mlflow.deployments.databricks.DatabricksDeploymentClient:
+            response: mlflow.deployments.databricks.DatabricksEndpoint = (
+                deploy_client.predict(
+                    endpoint=endpoint_name,
+                    inputs=input_data,
+                )
+            )
+            choices = response["choices"]
+            *_, last_choice = choices  # type: ignore
+            return str(last_choice["message"]["content"])
+        case _:
+            log.info(f"Using Deploy Client type: {type(deploy_client)}")
+            raise NotImplementedError(
+                f"Deploy Client type {type(deploy_client)} is not supported"
+            )
 
 
 def generate_test_case_prompt(
@@ -53,9 +70,7 @@ def generate_test_case_prompt(
                 feature="Order Tracking",
                 scenario="Invalid Data Provided",
                 persona="Frustrated Customer",
-                assumptions=[
-                    "Order number #1234 does not exist in the system"
-                ],
+                assumptions=["Order number #1234 does not exist in the system"],
                 constraints=["Be professional and concise"],
             ),
             "output": (
@@ -121,16 +136,16 @@ def process_test_cases(
     test_cases: list[TestCase], experiment_name: str, endpoint_name: str
 ) -> tuple[list[TestCase], str]:
     experiment = init_mlflow(experiment_name)
+    final_test_cases = []
     with mlflow.start_run(experiment_id=experiment.experiment_id) as run:
         mlflow.autolog()
-        run_id = run.info.run_id
-        final_test_cases = []
+        run_id: str = run.info.run_id
         for test_case in test_cases:
             updated_test_case = generate_test_case(
                 test_case, experiment_name, endpoint_name
             )
             final_test_cases.append(updated_test_case)
-    return final_test_cases, run_id
+    return final_test_cases, run_id  # pyright: ignore[reportPossiblyUnboundVariable ]
 
 
 def get_output_from_agent(
@@ -138,8 +153,8 @@ def get_output_from_agent(
     agent_name: str,
     version: str | None = None,
     alias: str | None = None,
-) -> tuple[str, str]:
-    responses = []
+) -> tuple[list[str], str]:
+    responses: list[str] = []
     experiment = init_mlflow(experiment_name="/experiments/evalgen_annotation")
     client = mlflow.MlflowClient()
     if alias:
@@ -153,18 +168,20 @@ def get_output_from_agent(
         run_id = run.info.run_id
         for test_case in test_cases:
             input_data = {
-                "messages": [
-                    {"role": "user", "content": test_case.test_case_output}
-                ],
+                "messages": [{"role": "user", "content": test_case.test_case_output}],
             }
-            response = agent.predict(data=input_data)
+            response: dict[str, Any] | None = agent.predict(data=input_data)
             if response is None:
-                responses.append("No response from agent")
+                responses.append(
+                    f"No response from agent for test case: {test_case.model_dump()}"
+                )
                 continue
             messages = response.get("messages", None)
             if messages:
                 *_, last_message = messages
-                responses.append(last_message["content"])
+                responses.append(str(last_message["content"]))
             else:
-                responses.append("No response from agent")
-    return responses, run_id
+                responses.append(
+                    f"No response from agent for test case: {test_case.model_dump()}"
+                )
+    return responses, run_id  # pyright: ignore[reportPossiblyUnboundVariable ]
