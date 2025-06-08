@@ -1,4 +1,4 @@
-oqa: B018, F841, F821
+# noqa: B018, F841, F821
 
 import marimo
 
@@ -37,7 +37,6 @@ with app.setup:
 def _():
     import marimo as mo
     import pandas as pd
-
     from evalgen.test_cases import (
         TestCase,
         process_test_cases,

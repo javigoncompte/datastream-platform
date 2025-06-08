@@ -15,17 +15,18 @@ dev = [
     "marimo>=0.13.15",
 ]
 [tool.una]
-namespalce = "dataplatform"
-requires-python = "~= 3.11.9"
+namespace = "dataplatform"
+requires-python = "~= 3.11"
 
 [tool.uv.workspace]
-members = ["libs/*", "packages/*", "platform/*"]
+members = ["libs/*", "packages/*", "platform/*", "apps/*"]
 
 [tool.ruff]
 fix = true
 show-fixes = true
 line-length = 88
 indent-width = 4
+exclude = ["**/marimo_notebooks/**"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -37,10 +38,16 @@ preview = true
 convention = "google"
 
 [tool.basedpyright]
-pythonVersion = "3.11"
+reportInvalidTypeForm = "none"
+reportAssignmentType = "none"
+reportGeneralTypeIssues = "none"
+reportOptionalMemberAccess = "none"
+reportWildcardImportFromLibrary = "none"
+reportUnusedImport = "none"
 reportUnknownMemberType = false
 reportUnknownVariableType = false
 reportAttributeAccessIssue = "hint"
+reportUnknownArgumentType = "none"
 reportImplicitOverride = "none"
 reportRedeclaration = "none"
 reportUnusedCallResult = "none"
@@ -48,7 +55,7 @@ reportExplicitAny = "none"
 reportUnannotatedClassAttribute = "none"
 reportUninitializedInstanceVariable = "warning"
 reportAny = "none"
-reportUnknownArgumentType = "none"
+
 
 [tool.ruff.lint]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"

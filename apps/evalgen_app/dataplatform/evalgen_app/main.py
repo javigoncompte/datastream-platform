@@ -353,7 +353,7 @@ def add_test_case_row_form(session):
 @rt
 def save_test_case_row(
     session,
-    input: str,
+    user_input: str,
     output: str | None = None,
     notes: str | None = None,
     eval_type: str | None = None,
@@ -375,7 +375,7 @@ def save_test_case_row(
     new_test_case = {
         "input_id": next_input_id,
         "test_case_id": next_test_case_id,
-        "input": input,
+        "input": user_input,
         "output": output if output is not None else "",
         "notes": notes if notes is not None else "",
         "eval_type": eval_type if eval_type is not None else "pending",
@@ -509,7 +509,7 @@ def edit_test_case_form(input_id: int, session):
 def update_test_case_row(
     input_id: int,
     session,
-    input: str,
+    user_input: str,
     output: str | None = None,
     notes: str | None = None,
     eval_type: str | None = None,
@@ -528,7 +528,7 @@ def update_test_case_row(
     found = False
     for tc in test_cases:
         if tc.get("input_id") == input_id:
-            tc["input"] = input
+            tc["input"] = user_input
             # tc["test_case_id"] remains unchanged
             tc["output"] = output if output is not None else tc.get("output", "")
             tc["notes"] = notes if notes is not None else tc.get("notes", "")

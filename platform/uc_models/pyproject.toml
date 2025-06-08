@@ -3,9 +3,7 @@ name = "uc-models"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "Javier Gonzalez", email = "javiergonzalez7@gmail.com" }
-]
+authors = [{ name = "Javier Gonzalez", email = "javiergonzalez7@gmail.com" }]
 requires-python = ">=3.11"
 dependencies = [
     "databricks-sqlalchemy~=2.0.5",
@@ -13,6 +11,7 @@ dependencies = [
     "databricks-sql-connector~=4.0.0",
     "sqlacodegen~=3.0.0",
 ]
+dynamic = ["una"]
 
 [project.scripts]
 uc-models = "uc_models:main"
@@ -22,8 +21,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-dev = [
-    "basedpyright >= 1.23.1",
-    "pytest >= 8.3.4",
-    "ruff >= 0.9.9",
-]
+dev = ["basedpyright >= 1.23.1", "pytest >= 8.3.4", "ruff >= 0.9.9"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.uv.sources]
+
+[tool.uv.sources.unity_catalog]
+workspace = true
+[tool.hatch.build.hooks.una-build]
+[tool.hatch.metadata.hooks.una-meta]
