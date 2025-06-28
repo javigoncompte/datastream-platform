@@ -1,9 +1,15 @@
 from databricks.bundles.jobs import Job
 
+from . import load_resources
+
 """
 The main job for datastream.
 """
-notebook_path = "packages/datastream/notebook.ipynb"
+
+resources_path = str(load_resources.package_path)
+print(f"resources_path: {resources_path}")
+notebook_path = f"{resources_path}/notebook.ipynb"
+
 datastream_job = Job.from_dict({
     "name": "datastream_job",
     "trigger": {},
@@ -22,6 +28,7 @@ datastream_job = Job.from_dict({
         },
         {
             "task_key": "main_task",
+            "environment_key": "default",
             "depends_on": [
                 {
                     "task_key": "notebook_task",
@@ -46,8 +53,8 @@ datastream_job = Job.from_dict({
             "environment_key": "default",
             "spec": {
                 "dependencies": ["dist/*.whl"],
-                "environment_version": "1",
+                "environment_version": "3",
             },
-        }
+        }  # pyright: ignore[reportArgumentType]
     ],
 })

@@ -1,7 +1,9 @@
 from databricks.bundles.core import (
     Bundle,
     Resources,
+    Variable,
     load_resources_from_current_package_module,
+    variables,
 )
 
 
@@ -12,5 +14,14 @@ def load_resources(bundle: Bundle) -> Resources:
     bundle deployment. After deployment, this function is not used.
     """
 
-    # the default implementation loads all Python files in 'resources' directory
+    namespace = "dataplatform"
+    variables = bundle.variables
+    wheel_name = variables["package_name"]
+    type_of_package = variables["type_of_package"]
+
+    print(f"wheel_name: {wheel_name}")
+    print(f"type_of_package: {type_of_package}")
+    resources_path = f"{type_of_package}/{wheel_name}/{namespace}"
+    load_resources.wheel_name = wheel_name
+    load_resources.package_path = resources_path
     return load_resources_from_current_package_module()

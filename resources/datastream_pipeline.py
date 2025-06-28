@@ -1,12 +1,14 @@
 from databricks.bundles.pipelines import Pipeline
 
-package_path = "packages/datastream"
-notebook_path = "packages/datastream/dlt_pipeline.ipynb"
+from . import load_resources
+
+package_path = load_resources.package_path
+notebook_path = f"{package_path}/dlt_pipeline.ipynb"
 datastream_pipeline = Pipeline.from_dict({
     "name": "datastream_pipeline",
     "target": "datastream_${bundle.target}",
-    ## Specify the 'catalog' field to configure this pipeline to make use of Unity Catalog:
-    "catalog": "catalog_name",
+    # Specify the 'catalog' field to configure this pipeline to make use of Unity Catalog:
+    "catalog": "test",
     "libraries": [
         {
             "notebook": {
@@ -15,6 +17,6 @@ datastream_pipeline = Pipeline.from_dict({
         },
     ],
     "configuration": {
-        "bundle.sourcePath": "${workspace.file_path}/${package_path}",
+        "bundle.sourcePath": "${workspace.file_path}",
     },
 })

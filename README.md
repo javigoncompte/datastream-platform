@@ -179,6 +179,4 @@ uvx --from build pyproject-build --installer=uv \
 
 ## Building EvalGen
 `uvx --from build pyproject-build --installer=uv --outdir=dist  --wheel libs/evalgen`
-
-
-
+`uvx --with uvx-dynamic-versioning --from build pyproject-build --installer uv --wheel packages/datastream`

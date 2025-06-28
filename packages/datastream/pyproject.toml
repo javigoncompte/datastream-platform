@@ -10,7 +10,7 @@ override-dependencies = [
     "pyspark; sys_platform == 'never'",
 ]
 [build-system]
-requires = ["hatchling", "hatch-una"]
+requires = ["hatchling", "hatch-una", "uv-dynamic-versioning"]
 build-backend = "hatchling.build"
 
 [tool.hatch.metadata]

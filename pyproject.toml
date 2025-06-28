@@ -15,22 +15,19 @@ dev = [
     "una>=0.6.1",
     "marimo>=0.13.15",
     "uv-dynamic-versioning>=0.8.2",
+    "databricks-labs-pytester>=0.7.2",
+    "databricks-labs-dqx>=0.6.0",
 ]
 [tool.una]
 namespace = "dataplatform"
-requires-python = "~= 3.11.9"
-namespace = "dataplatform"
-requires-python = "~= 3.11"
 
 [tool.uv.workspace]
 members = ["libs/*", "packages/*", "platform/*"]
 
 [project.entry-points.packages]
 main = "datastream.main:main"
-members = ["libs/*", "packages/*", "platform/*", "apps/*"]
 
 [tool.ruff]
-
 fix = true
 show-fixes = true
 line-length = 88
@@ -76,6 +73,6 @@ ignore = ["D417", "D100", "D101", "N812"]
 known-first-party = ["dataplatform"]
 
 [tool.pytest.ini_options]
-pythonpath = ["libs/*", "packages/*", "platform/*"]
+pythonpath = ["libs/*", "packages/*", "platform/*", "apps/*"]
 testpaths = ["libs/*", "packages/*", "platform/*"]
 addopts = ""
