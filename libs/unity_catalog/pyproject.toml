@@ -12,20 +12,17 @@ dependencies = [
     "unitycatalog-client>=0.2.1",
 ]
 
-[project.optional-dependencies]
-databricks = ["databricks-connect~=16.1.3"]
-sparkconnect = ["pyspark[connect]~=3.5.5"]
-deltars = ["deltalake~=0.25.5"]
-
 [build-system]
 requires = ["hatchling", "hatch-una>=0.5.1"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-dev = ["basedpyright>=1.29.0", "pytest>=8.3.4", "ruff>=0.11.6"]
-[tool.uv]
-default-groups = ["dev"]
+dev = ["basedpyright", "pytest", "ruff"]
+
 [tool.uv.sources]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.hooks.una-build]
 [tool.hatch.metadata.hooks.una-meta]

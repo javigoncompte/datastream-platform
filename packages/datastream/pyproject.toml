@@ -5,10 +5,7 @@ dependencies = []
 requires-python = "~= 3.11"
 dynamic = ["una", "version"] # needed for hatch-una metadata hook to work
 
-override-dependencies = [
-    # pyspark package conflicts with 'databricks-connect'
-    "pyspark; sys_platform == 'never'",
-]
+
 [build-system]
 requires = ["hatchling", "hatch-una", "uv-dynamic-versioning"]
 build-backend = "hatchling.build"
@@ -28,8 +25,10 @@ dev-dependencies = [
     "uv-dynamic-versioning>=0.8.2",
 ]
 
-[tool.uv.sources]
+[project.entry-points.packages]
+main = "datastream.main:main"
 
+[tool.uv.sources]
 
 [tool.hatch.build.hooks.una-build]
 [tool.hatch.metadata.hooks.una-meta]
@@ -47,3 +46,7 @@ format = """
     {{serialize_semver(base, branch, distance, metadata=[commit])}}
 {%- endif -%}
 """
+override-dependencies = [
+    # pyspark package conflicts with 'databricks-connect'
+    "pyspark; sys_platform == 'never'",
+]

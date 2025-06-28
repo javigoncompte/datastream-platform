@@ -19,7 +19,7 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "python-fasthtml>=0.12.19",
     "databricks-connect>=16.1.3",
-    "mlflow>=2.22.0",
+    "mlflow",
     "langchain>=0.3.25",
     "databricks-langchain>=0.4.0",
     "scikit-learn>=1.6.1",
@@ -28,49 +28,19 @@ dependencies = [
     "sqlmodel>=0.0.24",
 ]
 
-[project.optional-dependencies]
-databricks = ["alembic>=1.16.1"]
-
 [dependency-groups]
 dev = [
     "basedpyright",
     "databricks-sdk",
-    "databricks-connect~=16.1.3",
-    "pydantic~=2.11.3",
+    "databricks-connect",
+    "pydantic",
     "ruff",
 ]
+[tool.uv.sources]
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
-[tool.uv]
-dev-dependencies = [
-    "basedpyright>=1.29.0",
-    "databricks-sdk>=0.48.0",
-    "databricks-connect~=16.1.3",
-    "pydantic~=2.11.3",
-    "ruff>=0.11.6",
-]
-[tool.uv.sources]
 
 [tool.hatch.build.hooks.una-build]
 [tool.hatch.metadata.hooks.una-meta]
-
-[tool.basedpyright]
-reportInvalidTypeForm = "none"
-reportAssignmentType = "none"
-reportGeneralTypeIssues = "none"
-reportOptionalMemberAccess = "none"
-reportWildcardImportFromLibrary = "none"
-reportUnusedImport = "none"
-reportUnknownMemberType = false
-reportUnknownVariableType = false
-reportAttributeAccessIssue = "hint"
-reportUnknownArgumentType = "none"
-reportImplicitOverride = "none"
-reportRedeclaration = "none"
-reportUnusedCallResult = "none"
-reportExplicitAny = "none"
-reportUnannotatedClassAttribute = "none"
-reportUninitializedInstanceVariable = "warning"
-reportAny = "none"

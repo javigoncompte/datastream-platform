@@ -1,82 +1,67 @@
-# DataStream Platform
-## *Databricks Bundles Deploy Monorepo*
+# 🚀 DataStream Platform
 
-## Prerequisites
-1. Install Databricks CLI 0.238 or later.
+# �� Databricks Bundles Deploy Monorepo
+
+## 🔧 Prerequisites
+1. **Install Databricks CLI 0.238 or later.**
    See [Install or update the Databricks CLI](https://docs.databricks.com/en/dev-tools/cli/install.html).
 
-2. Install uv. See [Installing uv](https://docs.astral.sh/uv/getting-started/installation/).
+2. **Install uv.** See [Installing uv](https://docs.astral.sh/uv/getting-started/installation/).
    We use uv to create a virtual environment and install the required dependencies.
 
-3. Authenticate to your Databricks workspace if you have not done so already:
-    ```
-    $ databricks configure
-    ```
-libraries and tools/packages to use in data platforms
+3. **Authenticate to your Databricks workspace** if you have not done so already:
+   ```bash
+   $ databricks configure
+   ```
 
-4. Optionally, install developer tools such as the Databricks extension for Visual Studio Code from
+4. **Optionally, install developer tools** such as the Databricks extension for Visual Studio Code from
    https://docs.databricks.com/dev-tools/vscode-ext.html. Or read the "getting started" documentation for
    **Databricks Connect** for instructions on running the included Python code from a different IDE.
 
-5. For documentation on the Databricks Asset Bundles format used
+5. **For documentation on the Databricks Asset Bundles format** used
    for this project, and for CI/CD configuration, see
    https://docs.databricks.com/dev-tools/bundles/index.html.
 
-## Deploy and run jobs
+## 🚀 Deploy and run jobs
 
-1. Create a new virtual environment and install the required dependencies:
-    ```
-    $ uv sync
-    ```
+1. **Create a new virtual environment and install the required dependencies:**
+   ```bash
+   $ uv sync --all-packages
+   ```
 
-2. To deploy the bundle to the development target:
-    ```
-    $ databricks bundle deploy --target dev
-    ```
+2. **To deploy a specific package/app bundle to the development target:**
+   ```console
+   $ databricks bundle deploy --target dev --var="type_of_deployment=packages" --var="deployment_name=datastream"
+   ```
 
-   *(Note that "dev" is the default target, so the `--target` parameter is optional here.)*
+   > **Note:** "dev" is the default target, so the `--target` parameter is optional here.
 
    This deploys everything that's defined for this project.
    For example, the default template would deploy a job called
    `[dev yourname] datastream_job` to your workspace.
    You can find that job by opening your workspace and clicking on **Workflows**.
 
-3. Similarly, to deploy a production copy, type:
-   ```
-   $ databricks bundle deploy --target prod
+3. **Similarly, to deploy a production copy:**
+   ```bash
+   $ databricks bundle deploy --target prod --var="type_of_deployment=packages" --var="deployment_name=datastream"
    ```
 
-   Note that the default job from the template has a schedule that runs every day
-   (defined in resources/datastream_job.py). The schedule
-   is paused when deploying in development mode (see [Databricks Asset Bundle deployment modes](
-   https://docs.databricks.com/dev-tools/bundles/deployment-modes.html)).
-
-4. To run a job:
-   ```
+4. **To run a job:**
+   ```bash
    $ databricks bundle run
    ```
 
-## Development
-Using [uv](https://docs.astral.sh/uv/) for development:
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+#  📚 MonoRepo Structure 
 
-Install Python and dependencies:
-```bash
-uv sync --all-packages
-```
+## 📁 Structure
+- **�� libs**: importable packages, never run independently, do not have entry points
+- **🌐 apps**: Applications that can be deployed to web servers, **never imported**
+- **📦 packages**: Are just packages that you want to run either have entry points or just scripts calling custom packages **never imported**
 
-Read on below...
+## :ocean: Docker
+You can use Docker or just normal wheel builds
 
-## Structure
-- **libs**: importable packages, never run independently, do not have entry points
-- **apps**: have entry points, never imported
-
-
-## Docker
-
-## Syncing
+## 🔄 Syncing
 To make life easier while you're working across the workspace, you should run:
 ```bash
 uv sync --all-packages
@@ -92,10 +77,10 @@ This is not very useful.
 
 You can add an alias to your `.bashrc`/`.zshrc` if you like:
 ```bash
-alias uvs="uv sync --all-packages
+alias uvs="uv sync --all-packages"
 ```
 
-## Dependencies
+## 📋 Dependencies
 You'll notice that `apps/mycli` has `urllib3` as a dependency.
 Because of this, _every_ package in the workspace is able to import `urllib3` **in local development**,
 even though they don't include it as a direct or transitive dependency.
@@ -105,11 +90,11 @@ in production, where presumably you've only got the necessary dependencies insta
 
 There are two ways to guard against this:
 
-1. If you're working _only_ on eg `libs/server`, you can sync only that package (see above).
+1. **If you're working _only_ on eg `libs/server`**, you can sync only that package (see above).
 This will make your LSP shout and your tests fail, if you try to import something that isn't
 available to that package.
 
-2. Your CI (see example in [.github/workflows](.github/workflows)) should do the same.
+2. **Your CI** (see example in [.github/workflows](.github/workflows)) should do the same.
 
 ## Dev dependencies
 This repo has all the global dev dependencies (`basedpyright`, `pytest`, `ruff` etc) in the root
@@ -121,7 +106,7 @@ to keep things in sync.
 The reason they have to be repeated, is that if you follow the example above and install only
 a specific package, it won't include anything specified in the root package.
 
-## Tasks/scripts
+## ⚡ Tasks/scripts
 [Poe the Poet](https://poethepoet.natn.io/index.html) is used until uv includes its own task runner.
 
 Tasks are defined in the root pyproject.toml, mostly running again `${PWD}` so that if
@@ -141,28 +126,30 @@ uv run poe all
 If you run any of these from the workspace root, it will run for all packages,
 whereas if you run them inside a package, they'll run for only that package.
 
-## Testing
+## 🧪 Testing
 This repo includes a simple pytest test for each package.
 
-To test all packages:
+**To test all packages:**
 ```bash
 uv sync --all-packages
 uv run poe test
 ```
 
-To test a single package:
+**To test a single package:**
 ```bash
 cd apps/server
 uv sync
 uv run poe test
 ```
 
-## Pyright
-(This repo actually uses [basedpyright](https://docs.basedpyright.com/latest/).
+## ✅ basedpyright
+ >Note its a dev dependency so if you want to remove it and use ty or something else go ahead.
+
+This repo actually uses [basedpyright](https://docs.basedpyright.com/latest/).
 
 The following needs to be included with every package `pyproject.toml`:
 ```toml
-[tool.pyright]
+[tool.basedpyright]
 venvPath = "../.."       # point to the workspace root where the venv is
 venv = ".venv"
 strict = ["**/*.py"]
@@ -171,12 +158,15 @@ pythonVersion = "3.13"
 
 Then you can run `uv run poe check` as for tests.
 
-```
-uvx --from build pyproject-build --installer=uv \
-    --outdir=dist --wheel apps/printer
+```bash
+$ uvx --from build pyproject-build --installer=uv --outdir=dist --wheel apps/printer
 ```
 
+## 🔨 Building Wheels
+```bash
+# Builds Evalgen a library
+$ uvx --from build pyproject-build --installer=uv --outdir=dist  --wheel libs/evalgen
 
-## Building EvalGen
-`uvx --from build pyproject-build --installer=uv --outdir=dist  --wheel libs/evalgen`
-`uvx --with uvx-dynamic-versioning --from build pyproject-build --installer uv --wheel packages/datastream`
+# Builds a package named datastream
+$ uvx --with uvx-dynamic-versioning --from build pyproject-build --installer uv --wheel packages/datastream
+```

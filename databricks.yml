@@ -18,11 +18,11 @@ sync:
     - "databricks_bundle_yaml_reference_schema.json"
 
 variables:
-  type_of_package:
+  type_of_deployment:
     description: "The type of package to build"
     default: "packages"
     type: string
-  package_name:
+  deployment_name:
     description: "The name of the package to build with its parent directory"
     default: "datastream"
 experimental:

@@ -22,10 +22,7 @@ dev = [
 namespace = "dataplatform"
 
 [tool.uv.workspace]
-members = ["libs/*", "packages/*", "platform/*"]
-
-[project.entry-points.packages]
-main = "datastream.main:main"
+members = ["libs/*", "packages/*", "platform/*", "apps/*"]
 
 [tool.ruff]
 fix = true
@@ -39,10 +36,14 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 preview = true
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.basedpyright]
+pythonVersion = "3.11"
+venvPath = "."
+venv = ".venv"
 reportInvalidTypeForm = "none"
 reportAssignmentType = "none"
 reportGeneralTypeIssues = "none"
