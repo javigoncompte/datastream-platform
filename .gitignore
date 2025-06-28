@@ -171,3 +171,15 @@ cython_debug/
 .pypirc
 
 .vscode
+.databrickscfg
+.DS_Store
+
+# Databricks
+.databricks/
+build/
+dist/
+__pycache__/
+*.egg-info
+.venv/
+scratch/**
+!scratch/README.md

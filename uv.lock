@@ -14,6 +14,7 @@ resolution-markers = [
 
 [manifest]
 members = [
+    "datastream",
     "datastream-platform",
     "evalgen",
     "evalgen-app",
@@ -605,6 +606,15 @@ wheels = [
 ]
 
 [[package]]
+name = "databricks-bundles"
+version = "0.257.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/df/90/6ad6ea1dfb39119271414dd4fe492eef6547cf679b041ff2ce7648e0fcb0/databricks_bundles-0.257.0.tar.gz", hash = "sha256:b09c220db51ce0b93a5511dc5b3bf834dc91c1d3082ec20f843bf8eb06bc8c17", size = 66300, upload_time = "2025-06-25T15:36:54.528Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/dd/e6/a253eaf5966722e0f6bee3e25e7f4dd07257d04bcac3ba3aadb90a976906/databricks_bundles-0.257.0-py3-none-any.whl", hash = "sha256:aab19b8613fd5b3e7e04f3656ee891b9443dc5c95e2175a6a19334cbceb90e60", size = 132661, upload_time = "2025-06-25T15:36:52.743Z" },
+]
+
+[[package]]
 name = "databricks-connect"
 version = "16.1.3"
 source = { registry = "https://pypi.org/simple" }
@@ -716,6 +726,35 @@ wheels = [
 ]
 
 [[package]]
+name = "datastream"
+version = "0.1.0"
+source = { editable = "packages/datastream" }
+
+[package.dev-dependencies]
+dev = [
+    { name = "basedpyright" },
+    { name = "databricks-bundles" },
+    { name = "databricks-connect" },
+    { name = "databricks-sdk" },
+    { name = "pydantic" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "basedpyright" },
+    { name = "databricks-bundles", specifier = "==0.257.0" },
+    { name = "databricks-connect", specifier = "~=16.1.3" },
+    { name = "databricks-sdk", specifier = ">=0.56.0" },
+    { name = "pydantic", specifier = "~=2.11.3" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+
+[[package]]
 name = "datastream-platform"
 version = "0.1.0"
 source = { virtual = "." }
@@ -723,27 +762,29 @@ source = { virtual = "." }
 [package.dev-dependencies]
 dev = [
     { name = "basedpyright" },
-    { name = "duckdb" },
+    { name = "databricks-bundles" },
+    { name = "databricks-sdk" },
     { name = "marimo" },
     { name = "pip" },
-    { name = "polars" },
     { name = "pytest" },
     { name = "ruff" },
     { name = "una" },
+    { name = "uv-dynamic-versioning" },
 ]
 
 [package.metadata]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "basedpyright", specifier = ">=1.29.0" },
-    { name = "duckdb", specifier = ">=1.2.2" },
+    { name = "basedpyright" },
+    { name = "databricks-bundles", specifier = "==0.257.0" },
+    { name = "databricks-sdk", specifier = ">=0.56.0" },
     { name = "marimo", specifier = ">=0.13.15" },
     { name = "pip", specifier = ">=25.0.1" },
-    { name = "polars", specifier = ">=1.27.1" },
-    { name = "pytest", specifier = ">=8.3.4" },
-    { name = "ruff", specifier = ">=0.11.6" },
+    { name = "pytest" },
+    { name = "ruff" },
     { name = "una", specifier = ">=0.6.1" },
+    { name = "uv-dynamic-versioning", specifier = ">=0.8.2" },
 ]
 
 [[package]]
@@ -799,8 +840,8 @@ wheels = [
 ]
 
 [[package]]
-name = "duckdb"
-version = "1.2.2"
+name = "dunamai"
+version = "1.24.1"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/28/b8/0f86278684fb7a1fac7c0c869fc6d68ed005cdc91c963eb4373e0551bc0a/duckdb-1.2.2.tar.gz", hash = "sha256:1e53555dece49201df08645dbfa4510c86440339889667702f936b7d28d39e43", size = 11595514 }
 wheels = [
@@ -882,10 +923,9 @@ dev = [
 requires-dist = [
     { name = "alembic", marker = "extra == 'databricks'", specifier = ">=1.16.1" },
     { name = "databricks-agents", specifier = ">=0.17.2" },
-    { name = "databricks-connect", specifier = ">=15.4.8" },
     { name = "databricks-connect", specifier = ">=16.1.3" },
     { name = "databricks-langchain", specifier = ">=0.4.0" },
-    { name = "databricks-sdk", specifier = ">=0.48.0" },
+    { name = "databricks-sdk" },
     { name = "databricks-sqlalchemy", specifier = ">=2.0.6" },
     { name = "fastcore", specifier = ">=1.8.0" },
     { name = "fastsql", specifier = ">=2.0.3" },
@@ -904,11 +944,11 @@ provides-extras = ["databricks"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "basedpyright", specifier = ">=1.29.0" },
+    { name = "basedpyright" },
     { name = "databricks-connect", specifier = "~=16.1.3" },
-    { name = "databricks-sdk", specifier = ">=0.48.0" },
+    { name = "databricks-sdk" },
     { name = "pydantic", specifier = "~=2.11.3" },
-    { name = "ruff", specifier = ">=0.11.6" },
+    { name = "ruff" },
 ]
 
 [[package]]
@@ -1419,6 +1459,21 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f5/38/3af3d3633a34a3316095b39c8e8fb4853a28a536e55d347bd8d8e9a14b03/h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d", size = 100418 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/95/04/ff642e65ad6b90db43e668d70ffb6736436c7ce41fcc549f4e9472234127/h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761", size = 58259 },
+]
+
+[[package]]
+name = "hatchling"
+version = "1.27.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+    { name = "pathspec" },
+    { name = "pluggy" },
+    { name = "trove-classifiers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8f/8a/cc1debe3514da292094f1c3a700e4ca25442489731ef7c0814358816bb03/hatchling-1.27.0.tar.gz", hash = "sha256:971c296d9819abb3811112fc52c7a9751c8d381898f36533bb16f9791e941fd6", size = 54983, upload_time = "2024-12-15T17:08:11.894Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/08/e7/ae38d7a6dfba0533684e0b2136817d667588ae3ec984c1a4e5df5eb88482/hatchling-1.27.0-py3-none-any.whl", hash = "sha256:d3a2f3567c4f926ea39849cdf924c7e99e6686c9c8e288ae1037c8fa2a5d937b", size = 75794, upload_time = "2024-12-15T17:08:10.364Z" },
 ]
 
 [[package]]
@@ -2540,6 +2595,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pathspec"
+version = "0.12.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ca/bc/f35b8446f4531a7cb215605d100cd88b7ac6f44ab3fc94870c120ab3adbf/pathspec-0.12.1.tar.gz", hash = "sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712", size = 51043, upload_time = "2023-12-10T22:30:45Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cc/20/ff623b09d963f88bfde16306a54e12ee5ea43e9b597108672ff3a408aad6/pathspec-0.12.1-py3-none-any.whl", hash = "sha256:a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08", size = 31191, upload_time = "2023-12-10T22:30:43.14Z" },
+]
+
+[[package]]
 name = "pillow"
 version = "11.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3526,6 +3590,15 @@ wheels = [
 ]
 
 [[package]]
+name = "trove-classifiers"
+version = "2025.5.9.12"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/38/04/1cd43f72c241fedcf0d9a18d0783953ee301eac9e5d9db1df0f0f089d9af/trove_classifiers-2025.5.9.12.tar.gz", hash = "sha256:7ca7c8a7a76e2cd314468c677c69d12cc2357711fcab4a60f87994c1589e5cb5", size = 16940, upload_time = "2025-05-09T12:04:48.829Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/92/ef/c6deb083748be3bcad6f471b6ae983950c161890bf5ae1b2af80cc56c530/trove_classifiers-2025.5.9.12-py3-none-any.whl", hash = "sha256:e381c05537adac78881c8fa345fd0e9970159f4e4a04fcc42cfd3129cca640ce", size = 14119, upload_time = "2025-05-09T12:04:46.38Z" },
+]
+
+[[package]]
 name = "typeguard"
 version = "4.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3758,6 +3831,22 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/aa/63/e53da845320b757bf29ef6a9062f5c669fe997973f966045cb019c3f4b66/urllib3-2.3.0.tar.gz", hash = "sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d", size = 307268 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/19/4ec628951a74043532ca2cf5d97b7b14863931476d117c471e8e2b1eb39f/urllib3-2.3.0-py3-none-any.whl", hash = "sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df", size = 128369 },
+]
+
+[[package]]
+name = "uv-dynamic-versioning"
+version = "0.8.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "dunamai" },
+    { name = "hatchling" },
+    { name = "jinja2" },
+    { name = "pydantic" },
+    { name = "tomlkit" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9a/9e/1cf1ddf02e5459076b6fe0e90e1315df461b94c0db6c09b07e5730a0e0fb/uv_dynamic_versioning-0.8.2.tar.gz", hash = "sha256:a9c228a46f5752d99cfead1ed83b40628385cbfb537179488d280853c786bf82", size = 41559, upload_time = "2025-05-02T05:08:30.843Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bc/55/a6cffd78511faebf208d4ba1f119d489680668f8d36114564c6f499054b9/uv_dynamic_versioning-0.8.2-py3-none-any.whl", hash = "sha256:400ade6b4a3fc02895c3d24dd0214171e4d60106def343b39ad43143a2615e8c", size = 8851, upload_time = "2025-05-02T05:08:29.33Z" },
 ]
 
 [[package]]
