@@ -1,6 +1,6 @@
 from databricks.bundles.jobs import Job
 
-from . import load_resources
+from . import load_resources, wheel
 
 """
 The main job for datastream.
@@ -23,8 +23,10 @@ datastream_job = Job.from_dict({
             "task_key": "notebook_task",
             "notebook_task": {
                 "notebook_path": notebook_path,
+                "base_parameters": {
+                    "wheel_path": f"${{workspace.artifact_path}}/{wheel.name}"
+                },
             },
-            "environment_key": "default",
         },
         {
             "task_key": "main_task",
@@ -38,14 +40,6 @@ datastream_job = Job.from_dict({
                 "package_name": "datastream",
                 "entry_point": "main",
             },
-            "libraries": [
-                # By default we just include the .whl file generated for the datastream package.
-                # See https://docs.databricks.com/dev-tools/bundles/library-dependencies.html
-                # for more information on how to add other libraries.
-                {
-                    "whl": "dist/*.whl",
-                },
-            ],
         },
     ],
     "environments": [
@@ -55,6 +49,10 @@ datastream_job = Job.from_dict({
                 "dependencies": ["dist/*.whl"],
                 "environment_version": "3",
             },
-        }  # pyright: ignore[reportArgumentType]
+        },
+        {
+            "environment_key": "python_default",
+            "spec": {"environment_version": "3"},
+        },
     ],
 })

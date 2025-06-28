@@ -32,7 +32,6 @@ fix = true
 show-fixes = true
 line-length = 88
 indent-width = 4
-exclude = ["**/marimo_notebooks/**"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -49,18 +48,10 @@ reportAssignmentType = "none"
 reportGeneralTypeIssues = "none"
 reportOptionalMemberAccess = "none"
 reportWildcardImportFromLibrary = "none"
-reportUnusedImport = "none"
-reportUnknownMemberType = false
-reportUnknownVariableType = false
 reportAttributeAccessIssue = "hint"
-reportUnknownArgumentType = "none"
 reportImplicitOverride = "none"
 reportRedeclaration = "none"
-reportUnusedCallResult = "none"
-reportExplicitAny = "none"
-reportUnannotatedClassAttribute = "none"
 reportUninitializedInstanceVariable = "warning"
-reportAny = "none"
 
 
 [tool.ruff.lint]

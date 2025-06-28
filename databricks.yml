@@ -41,7 +41,7 @@ artifacts:
     path: .
     # We use timestamp as Local version identifier (https://peps.python.org/pep-0440/#local-version-identifiers.)
     # to ensure that changes to wheel package are picked up when used on all-purpose clusters
-    build: uvx --with uv-dynamic-versioning --from build pyproject-build --installer uv --outdir ./dist --wheel ${var.type_of_package}/${var.package_name}
+    build: rm ./dist/* && uvx --with uv-dynamic-versioning --from build pyproject-build --installer uv --outdir ./dist --wheel ${var.type_of_package}/${var.package_name}
 
 include:
   - resources/*.yml

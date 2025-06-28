@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from databricks.bundles.core import (
     Bundle,
     Resources,
@@ -5,6 +7,8 @@ from databricks.bundles.core import (
     load_resources_from_current_package_module,
     variables,
 )
+
+wheel = next(Path("dist").glob("*.whl"))
 
 
 def load_resources(bundle: Bundle) -> Resources:
