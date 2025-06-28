@@ -24,7 +24,10 @@ dev-dependencies = [
     "pytest",
     "uv-dynamic-versioning>=0.8.2",
 ]
-
+[tool.basedpyright]
+venvPath = "../.."
+venv = ".venv"
+pythonVersion = "3.11"
 [project.entry-points.packages]
 main = "datastream.main:main"
 

@@ -36,6 +36,10 @@ dev = [
     "pydantic",
     "ruff",
 ]
+[tool.basedpyright]
+venvPath = "../.."
+venv = ".venv"
+pythonVersion = "3.11"
 [tool.uv.sources]
 
 [tool.hatch.metadata]
