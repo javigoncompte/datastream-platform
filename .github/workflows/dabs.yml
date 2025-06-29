@@ -10,9 +10,6 @@ on:
       target:
         type: string
         required: true
-      env_vars:
-        type: string
-        required: true
     secrets:
       DATABRICKS_HOST:
         required: true
@@ -92,7 +89,7 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
-          ${{ inputs.env_vars }}
+          DATABRICKS_BUNDLE_ENV: ${{ inputs.environment }}
 
   deploy-packages:
     name: 'Deploy package ${{ matrix.package }} to ${{ inputs.environment }}'
@@ -116,7 +113,7 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
-          ${{ inputs.env_vars }}
+          DATABRICKS_BUNDLE_ENV: ${{ inputs.environment }}
 
   generate-tags:
     name: 'Generate tags for ${{ matrix.item }}'

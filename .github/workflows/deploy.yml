@@ -18,8 +18,6 @@ jobs:
       workflow_name: 'Test deployment'
       environment: 'test'
       target: 'test'
-      env_vars: |
-        DATABRICKS_BUNDLE_ENV: test
     secrets:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
@@ -34,8 +32,6 @@ jobs:
       workflow_name: 'QA deployment'
       environment: 'qa'
       target: 'qa'
-      env_vars: |
-        DATABRICKS_BUNDLE_ENV: qa
     secrets:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
@@ -50,8 +46,6 @@ jobs:
       workflow_name: 'Prod deployment'
       environment: 'prod'
       target: 'prod'
-      env_vars: |
-        DATABRICKS_BUNDLE_ENV: prod
     secrets:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
