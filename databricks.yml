@@ -34,14 +34,14 @@ experimental:
     resources:
       - "resources:load_resources"
 workspace:
-  root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/my-envs/${bundle.target}/${var.package_name}
+  root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/my-envs/${bundle.target}/${var.deployment_name}
 artifacts:
   default:
     type: whl
     path: .
     # We use timestamp as Local version identifier (https://peps.python.org/pep-0440/#local-version-identifiers.)
     # to ensure that changes to wheel package are picked up when used on all-purpose clusters
-    build: rm ./dist/* && uvx --with uv-dynamic-versioning --from build pyproject-build --installer uv --outdir ./dist --wheel ${var.type_of_package}/${var.package_name}
+    build: rm ./dist/* && uvx --with uv-dynamic-versioning --from build pyproject-build --installer uv --outdir ./dist --wheel ${var.type_of_deployment}/${var.deployment_name}
 
 include:
   - resources/*.yml
