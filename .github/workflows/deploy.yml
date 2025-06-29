@@ -15,7 +15,7 @@ jobs:
     if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/')
     with:
       workflow_name: 'Test deployment'
-      environment: 'test'
+      environment: 'main_free'
       target: 'test'
     secrets:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
@@ -29,7 +29,7 @@ jobs:
     if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/')
     with:
       workflow_name: 'QA deployment'
-      environment: 'qa'
+      environment: 'main_free'
       target: 'qa'
     secrets:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
