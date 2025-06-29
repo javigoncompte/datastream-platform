@@ -1,0 +1,41 @@
+name: 'Prod deployment'
+
+on:
+  workflow_call:
+    inputs:
+      workflow_name:
+        required: false
+        default: 'Prod deployment'
+      trigger_type:
+        required: false
+        default: 'push'
+      trigger_config:
+        required: false
+        default: |
+          branches:
+            - main
+      environment:
+        required: false
+        default: 'prod'
+      target:
+        required: false
+        default: 'dev'
+      env_vars:
+        required: false
+        default: |
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_BUNDLE_ENV: prod
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/dabs/templates/deploy.yml
+    with:
+      workflow_name: ${{ inputs.workflow_name }}
+      trigger_type: ${{ inputs.trigger_type }}
+      trigger_config: ${{ inputs.trigger_config }}
+      environment: ${{ inputs.environment }}
+      target: ${{ inputs.target }}
+      env_vars: ${{ inputs.env_vars }}
+    secrets: inherit
