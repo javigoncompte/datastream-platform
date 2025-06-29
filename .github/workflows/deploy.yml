@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-    tags:
-      - '*/*'
   pull_request:
     types: [opened, reopened, synchronize]
 
 jobs:
+
   deploy-test:
     name: 'Deploy to test'
     uses: ./.github/workflows/dabs.yml
@@ -37,6 +36,7 @@ jobs:
       DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
       DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
 
+
   deploy-prod:
     name: 'Deploy to prod'
     uses: ./.github/workflows/dabs.yml
@@ -50,3 +50,4 @@ jobs:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
       DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }} 
+  

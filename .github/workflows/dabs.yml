@@ -115,36 +115,4 @@ jobs:
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
           DATABRICKS_BUNDLE_ENV: ${{ inputs.environment }}
 
-  generate-tags:
-    name: 'Generate tags for ${{ matrix.item }}'
-    runs-on: ubuntu-latest
-    needs: [detect-changes, deploy-apps, deploy-packages]
-    if: github.ref == 'refs/heads/main' && (needs.detect-changes.outputs.apps-changed == 'true' || needs.detect-changes.outputs.packages-changed == 'true')
-    strategy:
-      matrix:
-        item: ${{ concat(needs.detect-changes.outputs.changed-apps, needs.detect-changes.outputs.changed-packages) }}
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate semantic version
-        id: version
-        run: |
-          # Get current timestamp for patch version
-          TIMESTAMP=$(date +%s)
-          PATCH_VERSION=$((TIMESTAMP % 1000))
-          
-          # Generate semantic version
-          VERSION="1.0.${PATCH_VERSION}"
-          
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Generated version: $VERSION"
-
-      - name: Create and push tag
-        run: |
-          TAG_NAME="${{ matrix.item }}-v${{ steps.version.outputs.version }}"
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
-          echo "Created tag: $TAG_NAME" 
