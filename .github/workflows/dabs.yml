@@ -13,6 +13,13 @@ on:
       env_vars:
         type: string
         required: true
+    secrets:
+      DATABRICKS_HOST:
+        required: true
+      DATABRICKS_CLIENT_SECRET:
+        required: true
+      DATABRICKS_CLIENT_ID:
+        required: true
 
 jobs:
   detect-changes:
@@ -82,6 +89,9 @@ jobs:
             --var="deployment_name=${{ matrix.app }}"
         working-directory: .
         env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
           ${{ inputs.env_vars }}
 
   deploy-packages:
@@ -103,6 +113,9 @@ jobs:
             --var="deployment_name=${{ matrix.package }}"
         working-directory: .
         env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
           ${{ inputs.env_vars }}
 
   generate-tags:
