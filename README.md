@@ -1,7 +1,10 @@
 # 🚀 DataStream Platform
 
 # �� Databricks Bundles Deploy Monorepo
-
+### Sync the una dependecy graph
+```bash
+uv run una sync
+```
 ## 🔧 Prerequisites
 1. **Install Databricks CLI 0.238 or later.**
    See [Install or update the Databricks CLI](https://docs.databricks.com/en/dev-tools/cli/install.html).
@@ -107,41 +110,21 @@ The reason they have to be repeated, is that if you follow the example above and
 a specific package, it won't include anything specified in the root package.
 
 ## ⚡ Tasks/scripts
-[Poe the Poet](https://poethepoet.natn.io/index.html) is used until uv includes its own task runner.
-
-Tasks are defined in the root pyproject.toml, mostly running again `${PWD}` so that if
-you run a task from within a package, it'll only run for that package.
-
-You can run the tasks as follows:
-```bash
-uv run poe fmt
-           lint
-           check
-           test
-
-# or to run them all
-uv run poe all
-```
-
-If you run any of these from the workspace root, it will run for all packages,
-whereas if you run them inside a package, they'll run for only that package.
 
 ## 🧪 Testing
 This repo includes a simple pytest test for each package.
+```conosole
+make fmt
+make lint
+make check
+make test
 
-**To test all packages:**
-```bash
-uv sync --all-packages
-uv run poe test
+make all
 ```
-
-**To test a single package:**
+### Build
 ```bash
-cd apps/server
-uv sync
-uv run poe test
+make build
 ```
-
 ## ✅ basedpyright
  >Note its a dev dependency so if you want to remove it and use ty or something else go ahead.
 

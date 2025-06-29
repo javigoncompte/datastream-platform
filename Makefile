@@ -19,7 +19,7 @@ test:
 	uv run pytest
 
 build:
-	uvx --from build pyproject-build --installer=uv --wheel --outdir=dist libs/evalgen
+	uvx --from build pyproject-build --installer=uv --wheel --outdir=dist packages/datastream
 
 # build-docker: build
 # 	uv export --format=requirements-txt  --locked --no-dev --package=evalgen > requirements.txt
