@@ -1,0 +1,58 @@
+name: 'Deploy to environments'
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*/*'
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  deploy-test:
+    name: 'Deploy to test'
+    uses: ./.github/workflows/templates/dabs.yml
+    if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/')
+    with:
+      workflow_name: 'Test deployment'
+      environment: 'test'
+      target: 'test'
+      env_vars: |
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+        DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+        DATABRICKS_BUNDLE_ENV: test
+    secrets: inherit
+
+  deploy-qa:
+    name: 'Deploy to QA'
+    uses: ./.github/workflows/templates/dabs.yml
+    needs: deploy-test
+    if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/')
+    with:
+      workflow_name: 'QA deployment'
+      environment: 'qa'
+      target: 'qa'
+      env_vars: |
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+        DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+        DATABRICKS_BUNDLE_ENV: qa
+    secrets: inherit
+
+  deploy-prod:
+    name: 'Deploy to prod'
+    uses: ./.github/workflows/templates/dabs.yml
+    needs: deploy-qa
+    if: github.ref == 'refs/heads/main'
+    with:
+      workflow_name: 'Prod deployment'
+      environment: 'prod'
+      target: 'prod'
+      env_vars: |
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+        DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+        DATABRICKS_BUNDLE_ENV: prod
+    secrets: inherit 
