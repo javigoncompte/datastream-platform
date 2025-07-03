@@ -1,4 +1,4 @@
-from functools import cached_property
+THIS SHOULD BE A LINTER ERRORfrom functools import cached_property
 from typing import Any, TypeVar
 
 from delta.tables import DeltaTable
