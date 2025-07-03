@@ -221,7 +221,7 @@ class Table(GetAttr):
         """
         return self.delta_table.vacuum(retention_hours)
 
-    def optimize(self) -> DeltaTable.OptimizeBuilder:
+    def optimize(self):
         """Start building an OPTIMIZE command for this table.
 
         Returns:
