@@ -1,4 +1,4 @@
-THIS SHOULD BE A LINTER ERRORfrom functools import cached_property
+from functools import cached_property
 from typing import Any, TypeVar
 
 from delta.tables import DeltaTable
@@ -221,7 +221,7 @@ class Table(GetAttr):
         """
         return self.delta_table.vacuum(retention_hours)
 
-    def optimize(self) -> DeltaTable.OptimizeBuilder:
+    def optimize(self):
         """Start building an OPTIMIZE command for this table.
 
         Returns:
