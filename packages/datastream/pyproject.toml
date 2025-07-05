@@ -18,7 +18,7 @@ dev-dependencies = [
     "databricks-bundles==0.257.0",
     "basedpyright",
     "databricks-sdk>=0.56.0",
-    "databricks-connect~=16.1.3",
+    "databricks-connect~=16.4.1",
     "pydantic~=2.11.3",
     "ruff",
     "pytest",

@@ -70,6 +70,7 @@ class DeltaMetadataProvider:
 
     COMMON_PROPERTIES: dict[str, TablePropertyType] = {
         "delta.appendOnly": TablePropertyType.BOOLEAN,
+        "delta.changeDataFeedEnabled": TablePropertyType.BOOLEAN,
         "delta.dataSkippingNumIndexedCols": TablePropertyType.INTEGER,
         "delta.deletedFileRetentionDuration": TablePropertyType.STRING,
         "delta.logRetentionDuration": TablePropertyType.STRING,

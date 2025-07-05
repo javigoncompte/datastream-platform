@@ -3,7 +3,7 @@ name = "unity-catalog"
 version = "0.1.0"
 description = "Unity Catalog Library for a Data Platform"
 authors = []
-requires-python = "~=3.11"
+requires-python = "~=3.13"
 dynamic = ["una"]
 dependencies = [
     "databricks-sqlalchemy>=2.0.5",
@@ -18,10 +18,12 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = ["basedpyright", "pytest", "ruff"]
+polars = ["polars>=1.31.0"]
+
 [tool.basedpyright]
 venvPath = "../.."
 venv = ".venv"
-pythonVersion = "3.11"
+pythonVersion = "3.13"
 [tool.uv.sources]
 
 [tool.hatch.metadata]

@@ -1,7 +1,7 @@
 [project]
 name = "datastream-platform"
 version = "0.1.0"
-requires-python = "~=3.11"
+requires-python = "~=3.13"
 dependencies = []
 
 [dependency-groups]
@@ -15,8 +15,9 @@ dev = [
     "una>=0.6.1",
     "marimo>=0.13.15",
     "uv-dynamic-versioning>=0.8.2",
-    "databricks-labs-pytester>=0.7.2",
+    "databricks-connect~=16.4.1",
     "databricks-labs-dqx>=0.6.0",
+    "databricks-labs-pytester>=0.7.2",
 ]
 [tool.una]
 namespace = "dataplatform"
@@ -31,6 +32,8 @@ line-length = 88
 indent-width = 4
 
 [tool.ruff.format]
+docstring-code-format = true
+
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
@@ -41,9 +44,12 @@ preview = true
 convention = "google"
 
 [tool.basedpyright]
-pythonVersion = "3.11"
+pythonVersion = "3.13"
 venvPath = "."
 venv = ".venv"
+inlayHints.parameterNames = false
+inlayHints.callArgumentNames = false
+inlayHints.genericTypes = false
 reportInvalidTypeForm = "none"
 reportAssignmentType = "none"
 reportGeneralTypeIssues = "none"
@@ -53,13 +59,30 @@ reportAttributeAccessIssue = "hint"
 reportImplicitOverride = "none"
 reportRedeclaration = "none"
 reportUninitializedInstanceVariable = "warning"
-
+reportAny = "none"
+typeCheckingMode = "basic"
+reportUnusedCallResult = "warning"
+reportUnknownVariableType = "none"
+reportIgnoreCommentWithoutRule = "warning"
+reportUnknownMemberType = "none"
 
 [tool.ruff.lint]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-select = ["I", "E4", "E7", "E9", "F", "B", "T100", "N", "A"]
+select = ["I", "E4", "E7", "E9", "F", "B", "T100", "N", "A", "RUF"]
 preview = true
-ignore = ["D417", "D100", "D101", "N812"]
+ignore = [
+    "D417", # requires documentation for every function parameter.
+    "N812", # Missing docstring in public module
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D103", # Missing docstring in public function
+    "D104", # Missing docstring in public package
+    "D105", # Missing docstring in magic method
+    "D106", # Missing docstring in public nested class
+    "D107", # Missing docstring in __init__]
+]
+extend-select = ["W291"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["dataplatform"]

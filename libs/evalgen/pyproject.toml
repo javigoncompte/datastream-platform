@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "evalgen"
 version = "0.0.1"
 dynamic = ["una"]
-requires-python = "~=3.11"
+requires-python = "~=3.13"
 description = "Evalgen library for the Data Platform"
 dependencies = [
     "databricks-sdk",
@@ -18,7 +18,7 @@ dependencies = [
     "pydantic>=2.11.3",
     "python-dotenv>=1.1.0",
     "python-fasthtml>=0.12.19",
-    "databricks-connect>=16.1.3",
+    "databricks-connect",
     "mlflow",
     "langchain>=0.3.25",
     "databricks-langchain>=0.4.0",
@@ -39,7 +39,7 @@ dev = [
 [tool.basedpyright]
 venvPath = "../.."
 venv = ".venv"
-pythonVersion = "3.11"
+pythonVersion = "3.13"
 [tool.uv.sources]
 
 [tool.hatch.metadata]
