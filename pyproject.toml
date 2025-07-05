@@ -44,9 +44,6 @@ preview = true
 convention = "google"
 
 [tool.basedpyright]
-pythonVersion = "3.13"
-venvPath = "."
-venv = ".venv"
 inlayHints.parameterNames = false
 inlayHints.callArgumentNames = false
 inlayHints.genericTypes = false
