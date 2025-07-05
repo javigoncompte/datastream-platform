@@ -651,6 +651,7 @@ wheels = [
 name = "datastream"
 source = { editable = "packages/datastream" }
 dependencies = [
+    { name = "databricks-sdk" },
     { name = "databricks-sqlalchemy" },
     { name = "fastcore" },
     { name = "httpx" },
@@ -673,6 +674,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "databricks-sdk", specifier = ">=0.56.0" },
     { name = "databricks-sqlalchemy", specifier = ">=2.0.5" },
     { name = "fastcore", specifier = ">=1.8.1" },
     { name = "httpx", specifier = ">=0.28.1" },

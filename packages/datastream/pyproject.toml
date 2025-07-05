@@ -29,8 +29,9 @@ dev-dependencies = [
 main = "datastream.main:main"
 
 [tool.uv.sources]
-unity_catalog = { workspace = true }
 
+[tool.uv.sources.unity_catalog]
+workspace = true
 [tool.hatch.build.hooks.una-build]
 [tool.hatch.metadata.hooks.una-meta]
 
