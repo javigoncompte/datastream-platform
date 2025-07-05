@@ -2,8 +2,10 @@ from functools import wraps
 from typing import Any, Callable, TypeVar
 
 from delta.tables import DeltaTable
-from pyspark.sql import Column, DataFrame, SparkSession
 from pyspark.sql import functions as F
+from pyspark.sql.column import Column
+from pyspark.sql.dataframe import DataFrame
+from pyspark.sql.session import SparkSession
 from pyspark.sql.types import StructType
 
 from .deltalake import DeltaDeleteMode, DeltaMergeConfig, DeltaWriteMode
@@ -29,7 +31,7 @@ def with_delta_table(func: Callable[..., T]):  # pyright: ignore[reportUnknownPa
     @wraps(func)
     def wrapper(table_name: str, *args, **kwargs):
         spark: SparkSession = Spark().spark_session
-        delta_table = DeltaTable.forName(spark, table_name)
+        delta_table = DeltaTable.forName(spark, table_name)  # pyright: ignore[reportCallIssue]
         wrapper.table_name = table_name
         wrapper.delta_table = delta_table
         return func(delta_table, *args, **kwargs)
