@@ -190,3 +190,4 @@ __pycache__/
 .venv/
 scratch/**
 !scratch/README.md
+.env

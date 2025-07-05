@@ -1,16 +1,19 @@
 [project]
+dependencies = [
+    "databricks-sqlalchemy>=2.0.5",
+    "fastcore>=1.8.1",
+    "httpx>=0.28.1",
+    "databricks-sdk>=0.56.0",
+    "unitycatalog-client>=0.2.1",
+    "sqlmodel",
+]
+
 name = "unity-catalog"
 version = "0.1.0"
 description = "Unity Catalog Library for a Data Platform"
 authors = []
 requires-python = "~=3.13"
 dynamic = ["una"]
-dependencies = [
-    "databricks-sqlalchemy>=2.0.5",
-    "fastcore>=1.8.1",
-    "httpx>=0.28.1",
-    "unitycatalog-client>=0.2.1",
-]
 
 [build-system]
 requires = ["hatchling", "hatch-una>=0.5.1"]
@@ -21,7 +24,7 @@ dev = ["basedpyright", "pytest", "ruff"]
 polars = ["polars>=1.31.0"]
 
 [tool.basedpyright]
-venvPath = "../.."
+venvPath = "../../"
 venv = ".venv"
 pythonVersion = "3.13"
 [tool.uv.sources]

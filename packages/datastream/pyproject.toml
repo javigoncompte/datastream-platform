@@ -1,9 +1,9 @@
 [project]
+dependencies = ["unity_catalog", "polars"]
 name = "datastream"
 authors = []
-dependencies = []
 requires-python = "~= 3.11"
-dynamic = ["una", "version"] # needed for hatch-una metadata hook to work
+dynamic = ["una", "version"]               # needed for hatch-una metadata hook to work
 
 
 [build-system]
@@ -24,14 +24,16 @@ dev-dependencies = [
     "pytest",
     "uv-dynamic-versioning>=0.8.2",
 ]
+
 [tool.basedpyright]
-venvPath = "../.."
+venvPath = "../../"
 venv = ".venv"
 pythonVersion = "3.11"
 [project.entry-points.packages]
 main = "datastream.main:main"
 
 [tool.uv.sources]
+unity_catalog = { workspace = true }
 
 [tool.hatch.build.hooks.una-build]
 [tool.hatch.metadata.hooks.una-meta]

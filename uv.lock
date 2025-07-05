@@ -650,6 +650,14 @@ wheels = [
 [[package]]
 name = "datastream"
 source = { editable = "packages/datastream" }
+dependencies = [
+    { name = "databricks-sqlalchemy" },
+    { name = "fastcore" },
+    { name = "httpx" },
+    { name = "polars" },
+    { name = "sqlmodel" },
+    { name = "unitycatalog-client" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -664,6 +672,14 @@ dev = [
 ]
 
 [package.metadata]
+requires-dist = [
+    { name = "databricks-sqlalchemy", specifier = ">=2.0.5" },
+    { name = "fastcore", specifier = ">=1.8.1" },
+    { name = "httpx", specifier = ">=0.28.1" },
+    { name = "polars" },
+    { name = "sqlmodel" },
+    { name = "unitycatalog-client", specifier = ">=0.2.1" },
+]
 
 [package.metadata.requires-dev]
 dev = [
@@ -2916,9 +2932,11 @@ name = "unity-catalog"
 version = "0.1.0"
 source = { editable = "libs/unity_catalog" }
 dependencies = [
+    { name = "databricks-sdk" },
     { name = "databricks-sqlalchemy" },
     { name = "fastcore" },
     { name = "httpx" },
+    { name = "sqlmodel" },
     { name = "unitycatalog-client" },
 ]
 
@@ -2934,9 +2952,11 @@ polars = [
 
 [package.metadata]
 requires-dist = [
+    { name = "databricks-sdk", specifier = ">=0.56.0" },
     { name = "databricks-sqlalchemy", specifier = ">=2.0.5" },
     { name = "fastcore", specifier = ">=1.8.1" },
     { name = "httpx", specifier = ">=0.28.1" },
+    { name = "sqlmodel" },
     { name = "unitycatalog-client", specifier = ">=0.2.1" },
 ]
 
