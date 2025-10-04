@@ -17,15 +17,15 @@ locals {
   profile_config = {
     "DEFAULT" = {
       environment = "dev"
-      host        = "https://dbc-78c2ed4d-f375.cloud.databricks.com"
+      host        = "https://*.cloud.databricks.com"
     }
     "dev" = {
       environment = "dev"
-      host        = "https://dbc-78c2ed4d-f375.cloud.databricks.com"
+      host        = "https://*.cloud.databricks.com"
     }
     "prod" = {
       environment = "prod"
-      host        = "https://dbc-28f5121a-2591.cloud.databricks.com"
+      host        = "https://*.cloud.databricks.com"
     }
   }
   
