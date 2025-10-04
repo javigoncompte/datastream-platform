@@ -26,7 +26,7 @@ uv run una --help
 ╰───────────────────────────────────────────────────────╯
 ```
 
-## We are using the namespace vasa so una the hatch tool we use to build is able to tell the difference between local packages and Pypi
+## We are using the namespace dataplatform so una the hatch tool we use to build is able to tell the difference between local packages and Pypi
 
 ## LAYOUT
 
@@ -39,7 +39,7 @@ uv run una --help
 ├── packages
 │   ├── client
 │   │   ├── README.md
-│   │   ├── vasa 
+│   │   ├── dataplatform 
 │   │   │   └── infrastructure
 │   │   │       ├── __init__.py
 │   │   └── pyproject.toml
@@ -51,14 +51,14 @@ uv run una --help
 │   │   └── pyproject.toml
 │   ├── transformation 
 │   │   ├── README.md
-│   │   ├── vasa 
+│   │   ├── dataplatform 
 │   │   │   └── infrastructure
 │   │   │       ├── __init__.py
 │   │   └── pyproject.toml
 ├── projects
 │   └── marketing
 │       └── marketing_kpi
-│           ├── vasa 
+│           ├── dataplatform 
 │           │   ├── marketing_kpi
 │           │   │   ├── __init__.py
 │           │   │   └── py.typed

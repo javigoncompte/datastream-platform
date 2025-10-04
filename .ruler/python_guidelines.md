@@ -35,7 +35,7 @@
 - All functions, methods, and classes must have Google-style docstrings, thoroughly explaining their purpose, parameters, return values, and any exceptions raised. Include usage examples where helpful.
 - Aim for high data validation coverage on Gold table
 - Use specific exception types, provide informative error messages, and handle exceptions gracefully. Implement custom exception classes when needed. Avoid bare `except` clauses.
-- Employ vasa.core.logger at the file level scope. Use: logging = get_logger(__name__). The logger used is [logger.py](mdc:packages/core/logger.py). Logging should be used minimally, ideally at the top and bottom of a function, to log important events, warnings, and errors.
+- Employ dataplatform.core.logger at the file level scope. Use: logging = get_logger(__name__). The logger used is [logger.py](mdc:packages/core/logger.py). Logging should be used minimally, ideally at the top and bottom of a function, to log important events, warnings, and errors.
 
 ## Reading Data
 - When reading data use the managed table client

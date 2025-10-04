@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Local Developer Environment Assistant
 
-This guide helps developers set up and troubleshoot their local Python environment for the VASA data platform, especially focusing on Databricks connectivity and common issues faced by junior developers.
+This guide helps developers set up and troubleshoot their local Python environment for the dataplatform data platform, especially focusing on Databricks connectivity and common issues faced by junior developers.
 
 ## 1. Configuration Files Reference
 
@@ -53,7 +53,7 @@ This is a **monorepo** using:
 ```bash
 # For Databricks connectivity
 DATABRICKS_CONFIG_FILE=~/.databrickscfg
-DATABRICKS_CONFIG_PROFILE=DEFAULT  # or dev-vasa, prod, etc.
+DATABRICKS_CONFIG_PROFILE=DEFAULT  # or dev-dataplatform, prod, etc.
 DATABRICKS_AUTH_TYPE=pat
 ```
 
@@ -98,7 +98,7 @@ auth_type = pat
 token = your_token_here
 serverless_compute_id = auto
 
-[dev-vasa]
+[dev-dataplatform]
 host = https://dbc-78c2ed4d-f375.cloud.databricks.com/
 auth_type = pat
 token = your_token_here
@@ -174,17 +174,17 @@ Check the `@ActiveTab` or current file context:
 
 ### Import Errors
 
-**Error:** `ModuleNotFoundError: No module named 'vasa.core'`
+**Error:** `ModuleNotFoundError: No module named 'dataplatform.core'`
 **Solutions:**
 1. Check if virtual environment is active: `which python`
 2. Reinstall packages: `uv sync --all-packages --dev`
 3. Clean cache: `uv clean`
 4. Verify Python path includes packages: `python -c "import sys; print(sys.path)"`
 
-**Error:** `ImportError: cannot import name 'something' from 'vasa.package'`
+**Error:** `ImportError: cannot import name 'something' from 'dataplatform.package'`
 **Solutions:**
 1. Check if you're importing from the right package
-2. Verify the function/class exists: `python -c "from vasa.package import *; print(dir())"`
+2. Verify the function/class exists: `python -c "from dataplatform.package import *; print(dir())"`
 3. Check for circular imports
 4. Rebuild packages: `uv sync --package member_retention_probability_model --dev`
 
@@ -292,7 +292,7 @@ databricks workspace list --profile DEFAULT
 cat ~/.databrickscfg | grep '\['
 
 # Test specific profile
-databricks workspace list --profile dev-vasa
+databricks workspace list --profile dev-dataplatform
 
 # Validate bundle (if working on Databricks project)
 cd projects/your_project && databricks bundle validate --target local --profile DEFAULT
@@ -304,7 +304,7 @@ cd projects/your_project && databricks bundle validate --target local --profile 
 python -c "import sys; print(f'Python: {sys.version}'); print(f'Path: {sys.path}')"
 
 # Test core imports
-python -c "import vasa.core, vasa.client; print('Imports successful')"
+python -c "import dataplatform.core, dataplatform.client; print('Imports successful')"
 
 # Check environment variables
 echo $DATABRICKS_CONFIG_PROFILE

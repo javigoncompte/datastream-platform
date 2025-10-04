@@ -20,7 +20,7 @@ example:
 
 ```bash
     ➜ pwd
-    /home/user/vasa/vasa_data_platform 
+    /home/user/dataplatform/dataplatform_data_platform 
     ➜ cd 
     /home/user/ 
     ➜ ls 
@@ -41,7 +41,7 @@ This is for most of our operations since you will be able to call databricks bun
 *Always specify `--target local`
 
 Example:
-    `databricks bundle validate --target local -profile dev-vasa`
+    `databricks bundle validate --target local -profile dev-dataplatform`
 
 **NOTICE FOR USING `databricks bundle init` always pass in `databricks_dab_templates`**
 Use the other commands at your discretion.

@@ -1,7 +1,7 @@
 # Data Pipeline Configuration Rule
 
 ## Overview
-This rule provides guidance for creating YAML configuration files for data transformation pipelines using the VASA transformation framework. These configs define how to transform bronze tables into silver/gold tables following the medallion architecture.
+This rule provides guidance for creating YAML configuration files for data transformation pipelines using the dataplatform transformation framework. These configs define how to transform bronze tables into silver/gold tables following the medallion architecture.
 
 ## YAML Configuration Structure
 
