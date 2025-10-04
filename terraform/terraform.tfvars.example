@@ -9,6 +9,30 @@ project_name = "dataplatform-data-platform"
 databricks_client_id     = "your-databricks-service-principal-client-id"
 databricks_client_secret = "your-databricks-service-principal-client-secret"
 
+# Service Principal OAuth Configuration (for AWS deployments)
+prod_service_principal_application_id = "your-prod-oauth-service-principal-application-id"
+dev_service_principal_application_id = "your-dev-oauth-service-principal-application-id"
+ci_cd_service_principal_application_id = "your-ci-cd-service-principal-application-id"  # Optional
+
+# Metastore Configuration (choose one or both)
+# Azure Metastore Configuration
+azure_storage_account = "your-azure-storage-account"
+azure_storage_container = "metastore"  # Optional, defaults to "metastore"
+azure_region = "East US"  # Optional, defaults to "East US"
+assign_azure_metastore = false  # Set to true to assign to Azure workspace
+azure_workspace_id = "your-azure-workspace-id"  # Required if assign_azure_metastore = true
+azure_default_catalog_name = "main"  # Optional, defaults to "main"
+
+# AWS Metastore Configuration
+aws_s3_bucket = "your-aws-s3-bucket"
+aws_region = "us-east-1"  # Optional, defaults to "us-east-1"
+assign_aws_metastore = false  # Set to true to assign to AWS workspace
+aws_workspace_id = "your-aws-workspace-id"  # Required if assign_aws_metastore = true
+aws_default_catalog_name = "main"  # Optional, defaults to "main"
+
+# Delta Sharing Configuration
+enable_delta_sharing = false  # Optional, defaults to false
+
 # ML Pool Configuration
 ml_pool_name        = "ml-pool-16-4-lts"
 ml_pool_node_type   = "i3.xlarge"
