@@ -1,0 +1,19 @@
+import sys
+
+import mlflow
+from dataplatform.{{template `project_name_alphanumeric_underscore` .}}.model_deployment.deploy import (
+    remove_alias,
+    set_alias,
+)
+
+registry_uri = "databricks-uc"
+mlflow.set_tracking_uri("databricks")
+mlflow.set_registry_uri(registry_uri)
+mlflow_client = mlflow.MlflowClient(registry_uri=registry_uri)
+model_name = sys.argv[1]
+model_version = sys.argv[2]
+
+
+set_alias(mlflow_client, model_name, "Champion", model_version)
+remove_alias(mlflow_client, model_name, "challenger", model_version)
+

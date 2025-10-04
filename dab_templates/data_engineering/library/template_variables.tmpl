@@ -1,0 +1,9 @@
+# define template variables
+
+{{ define "project_name_alphanumeric_underscore" -}}
+{{- (regexp `-`).ReplaceAllString ((regexp `[^A-Za-z0-9_-]`).ReplaceAllString (print .project_name) ``) `_` -}}
+{{- end }}
+
+{{ define "root_dir" -}}
+projects/{{ .domain_name }}/{{ .project_name }}
+{{- end }}

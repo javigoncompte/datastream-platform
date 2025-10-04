@@ -1,0 +1,24 @@
+resources:
+  jobs:
+    {{.project_name}}_job:
+      environments: ${var.serverless_environments}
+      name: {{.project_name}}_job
+      timeout_seconds: 2400
+      max_concurrent_runs: 1
+      queue:
+        enabled: false
+      schedule:
+        quartz_cron_expression: 0 0 0 * * ?
+        timezone_id: UTC
+        pause_status: ${var.job_pause_status}
+      tasks:
+        - task_key: main_task
+          environment_key: default
+          spark_python_task:
+            python_file: ../dataplatform/{{.project_name}}/tasks/silver_{{.project_name}}_transform_task.py
+        - task_key: qa_task
+          environment_key: default
+          depends_on:
+            - task_key: main_task
+          spark_python_task:
+            python_file: ../dataplatform/{{.project_name}}/tasks/silver_{{.project_name}}_qa_task.py

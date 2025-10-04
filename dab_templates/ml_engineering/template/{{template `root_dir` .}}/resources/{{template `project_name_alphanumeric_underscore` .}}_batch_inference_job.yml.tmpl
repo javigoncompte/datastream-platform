@@ -1,0 +1,42 @@
+# The batch inference job for {{template `project_name_alphanumeric_underscore` .}}
+resources:
+  jobs:
+    {{template `project_name_alphanumeric_underscore` .}}_batch_inference_job:
+      name: {{template `project_name_alphanumeric_underscore` .}}_batch_inference_job
+      job_clusters:
+        - job_cluster_key: ${var.job_cluster_key}
+          new_cluster:
+            spark_version: ${var.spark_version}
+            driver_node_type_id: "i3.4xlarge"
+            node_type_id: "i3.4xlarge"
+            autoscale:
+              min_workers: 2
+              max_workers: 4
+            spark_conf:
+              spark.databricks.delta.enableChangeDataFeed: "true"
+              spark.databricks.delta.schema.autoMerge.enabled: "true"
+              spark.databricks.delta.autoCompact.enabled: "true"
+              spark.databricks.delta.optimizeWrite.enabled: "true"
+      parameters:
+        - name: output_table_name
+          default: ${var.predictions_table_name}
+        - name: model_alias
+          default: "challenger"
+        - name: model_name
+          default: ${resources.registered_models.model.catalog_name}.${resources.registered_models.model.schema_name}.${resources.registered_models.model.name}
+      tasks:
+        - task_key: BatchInference
+          job_cluster_key: ${var.job_cluster_key}
+          max_retries: ${var.max_retries}
+          libraries:
+            - whl: ../dist/*.whl
+          spark_python_task:
+            python_file: ../dataplatform/{{template `project_name_alphanumeric_underscore` .}}/tasks/batch_inference_task.py
+            parameters:
+              - "{{`{{job.parameters.output_table_name}}`}}"
+              - "{{`{{job.parameters.model_alias}}`}}"
+              - "{{`{{job.parameters.model_name}}`}}"
+      queue:
+        enabled: true
+
+      max_concurrent_runs: 1

@@ -1,0 +1,9 @@
+# define template variables
+
+{{ define "project_name_alphanumeric_underscore" -}}
+{{- (regexp `-`).ReplaceAllString ((regexp `[^A-Za-z0-9_-]`).ReplaceAllString (print .project_name) ``) `_` -}}
+{{- end }}
+
+{{ define "root_dir" -}}
+.github/workflows/project_{{ .project_name }}
+{{- end }}

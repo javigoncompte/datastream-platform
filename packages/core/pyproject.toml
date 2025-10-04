@@ -1,0 +1,37 @@
+[project]
+name = "core"
+version = "0.0.0"
+description = "DataPlatform internal core lib"
+readme = "README.md"
+authors = [{ name = "javigoncompte" }]
+requires-python = ">=3.12"
+dynamic = ["una"]
+dependencies = [
+    "databricks-connect~=16.4.1",
+    "databricks-sdk~=0.65.0",
+    "mlflow[databricks]>=3.1.1",
+    "polars",
+    "boto3>=1.40.20",
+]
+
+
+[build-system]
+requires = ["hatchling", "hatch-una"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "core",
+    "databricks-labs-pytester>=0.7.2",
+    "lightgbm>=4.6.0",
+    "pytest>=8.3.5",
+    "python-dotenv>=1.1.1",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.hooks.una-build]
+[tool.hatch.metadata.hooks.una-meta]
+
+[tool.uv.sources]

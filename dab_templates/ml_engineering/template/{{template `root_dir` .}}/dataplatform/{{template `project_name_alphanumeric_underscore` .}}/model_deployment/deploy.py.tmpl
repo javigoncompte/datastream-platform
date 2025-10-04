@@ -1,0 +1,39 @@
+import mlflow
+from mlflow.entities.model_registry import ModelVersion
+
+
+def deploy_model_version(
+    model_name: str,
+    deployment_job_id: str,
+    model_uri: str,
+) -> ModelVersion:
+    client = mlflow.MlflowClient(registry_uri="databricks-uc")
+    model_version = mlflow.register_model(model_uri, model_name)
+    if client.get_registered_model(model_name):
+        _ = client.update_registered_model(
+            name=model_name,
+            description="{{template `project_name_alphanumeric_underscore` .}} model",
+            deployment_job_id=deployment_job_id,
+        )
+    version = model_version.version
+    set_alias(client, model_name, "challenger", version)
+    return model_version
+
+
+def set_alias(
+    client: mlflow.MlflowClient,
+    model_name: str,
+    alias: str,
+    model_version: str,
+):
+    client.set_registered_model_alias(model_name, alias, model_version)
+
+
+def remove_alias(
+    client: mlflow.MlflowClient,
+    model_name: str,
+    alias: str,
+    model_version: str,
+):
+    client.delete_registered_model_alias(model_name, alias)
+

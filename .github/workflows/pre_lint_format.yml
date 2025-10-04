@@ -1,0 +1,28 @@
+name: lint_format
+
+# Run this workflow on any push to your repo. You can customize branch filters.
+on:
+  push:
+    branches:
+      - feature/*
+      - task/*
+
+jobs:
+  lint_and_format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      
+      - name: Install ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          version: "0.12.7"
+          args: "--version"
+
+      - name: Run ruff check with fix
+        run: ruff check --fix . --config ./pyproject.toml
+
+      - name: Run ruff format
+        run: ruff format . --check --config ./pyproject.toml

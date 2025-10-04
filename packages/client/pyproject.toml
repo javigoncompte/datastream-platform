@@ -1,0 +1,36 @@
+[project]
+name = "client"
+version = "0.0.0"
+description = "DataPlatform internal client lib"
+readme = "README.md"
+authors = [{ name = "javigoncompte" }]
+requires-python = ">=3.12"
+dynamic = ["una"]
+dependencies = [
+    "core",
+    "databricks-connect~=16.4.1",
+    "databricks-sdk~=0.65.0",
+    "sqlalchemy~=2.0.40",
+    "sqlmodel~=0.0.24",
+    "databricks-sqlalchemy~=2.0.7",
+    "googlemaps>=4.10.0",
+    "databricks-feature-engineering>=0.12.1",
+    "fastcore>=1.8.7",
+    "ruamel-yaml>=0.18.14",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-una"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.hooks.una-build]
+[tool.hatch.metadata.hooks.una-meta]
+
+[tool.uv.sources]
+core = { workspace = true }

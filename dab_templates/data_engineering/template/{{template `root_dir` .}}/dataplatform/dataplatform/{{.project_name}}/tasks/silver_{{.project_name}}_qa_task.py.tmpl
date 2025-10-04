@@ -1,0 +1,37 @@
+from databricks.labs.dqx.engine import DQEngine
+from databricks.sdk import WorkspaceClient
+from dataplatform.client.managed_table_client import ManagedTableClient
+from dataplatform.core.logger import get_logger
+from dataplatform.transformation.config_reader import read_config
+
+logger = get_logger(__name__)
+
+if __name__ == "__main__":
+    managed_table_client = ManagedTableClient()
+    dq_engine = DQEngine(WorkspaceClient())
+
+    # Load QA checks using config reader
+    checks = read_config(
+        config_name="silver_{{.project_name}}_transforms_qa_task.yml",
+        package="dataplatform.{{.project_name}}.config.qa"
+    )
+
+    # Read input data
+    input_df = managed_table_client.read("sandbox.template.example_data")
+
+    # Apply quality checks and split into valid/quarantine
+    valid_df, quarantine_df = dq_engine.apply_checks_by_metadata_and_split(
+        input_df, checks
+    )
+
+    # Log quarantine count
+    quarantine_count = quarantine_df.count()
+    logger.info(f"Quarantine count: {quarantine_count}")
+
+    # Handle quarantined data
+    if quarantine_count > 0:
+        managed_table_client.overwrite(
+            quarantine_df,
+            "sandbox.template_quarantine.example_data",
+        )
+        raise ValueError(f"{{.project_name}} QA task failed! Quarantine count: {quarantine_count}")

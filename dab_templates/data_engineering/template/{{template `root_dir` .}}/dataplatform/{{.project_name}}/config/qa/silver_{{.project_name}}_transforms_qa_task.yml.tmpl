@@ -1,0 +1,9 @@
+# Databricks Data Quality checks for {{.project_name}} table
+
+# Example check
+- criticality: warn
+  check:
+    function: is_not_null_and_not_empty
+    arguments:
+      column: pk
+      trim_strings: true

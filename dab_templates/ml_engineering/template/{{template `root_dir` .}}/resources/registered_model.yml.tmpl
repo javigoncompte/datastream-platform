@@ -1,0 +1,7 @@
+resources:
+  registered_models:
+    model:
+      name: ${bundle.name}
+      catalog_name: ${var.catalog_name}
+      schema_name: ${var.schema_name}
+      comment: "{{template `project_name_alphanumeric_underscore` .}} model"

@@ -1,0 +1,27 @@
+{
+  "welcome_message": "Welcome To DataPlatform Bundle Stacks for Machine Learning Engineering",
+  "properties": {
+    "domain_name": {
+      "type": "string",
+      "default": "domain_name",
+      "description": "Domain name",
+      "order": 1,
+      "pattern": "^[A-Za-z][A-Za-z_]*$"
+    },
+    "project_name": {
+      "type": "string",
+      "default": "project_name",
+      "description": "Project name",
+      "order": 2,
+      "pattern": "^[A-Za-z][A-Za-z_]*$"
+    },
+    "input_inference_table_name": {
+      "type": "string",
+      "default": "dev_gold.{{ .domain_name }}.predictions",
+      "description": "Inference full qualified table name",
+      "order": 3,
+      "pattern": "^[^ .\\-\\/]+(\\.[^ .\\-\\/]+){2}$"
+    }
+  },
+  "success_message": "\n*** Your Bundle has been created in '{{template `root_dir` .}}'"
+}

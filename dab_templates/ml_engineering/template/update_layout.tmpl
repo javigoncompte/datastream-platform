@@ -1,0 +1,12 @@
+{{ $project_name_alphanumeric_underscore := (regexp `-`).ReplaceAllString ((regexp `[^A-Za-z0-9_-]`).ReplaceAllString .project_name ``) `_` }}
+{{ $root_dir := "" }}
+
+{{ $root_dir = printf "%s/%s/%s" `projects` .domain_name .project_name }}
+
+
+
+
+
+# Remove template files
+{{ skip `update_layout` }}
+{{ skip `run_validations` }}

@@ -1,0 +1,87 @@
+---
+description: This rule provides the following information data platform uses databricks as a deployment target and running jobs. This will tell you how to test/deploy jobs/pipelines/bundles. Github link https://github.com/databricks/cli
+alwaysApply: false
+
+---
+# DATABRICKS CLI
+
+`databricks <command-group> <command-name> <subcommand-name> [command-argument-value1] [--<flag1-name> <flag1-value>]`
+
+Always cd into the project where the code is to run `databricks bundle`
+
+Example:
+    changes are in projects/club/club_analytics/task.py =  `cd projects/club/club_analytics && databricks bundle validate --target local --profile DEFAULT`
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Do these steps always as starting your process in solving
+
+steps:
+
+1. If the environment DATABRICKS_CONFIG_PROFILE this will tell you which profile to use.
+2. do a find of in the user's $HOM  E folder for .databrickscfg read the file then ask the user to which profile they want to use.
+
+example:
+
+```bash
+    ➜ pwd
+    /home/user/vasa/vasa_data_platform 
+    ➜ cd 
+    /home/user/ 
+    ➜ ls 
+    .databrickscfg
+```
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Databricks Bundles 
+
+link : https://docs.databricks.com/aws/en/dev-tools/bundles/
+
+- jobs/dashboards/pipelines are stored inside the resources.
+
+*configuration_docs: https://docs.databricks.com/aws/en/dev-tools/bundles/settings*
+
+This is for most of our operations since you will be able to call databricks bundle [command] to either `run` a job `deploy` and `validate`.
+*Always specify `--target local`
+
+Example:
+    `databricks bundle validate --target local -profile dev-vasa`
+
+**NOTICE FOR USING `databricks bundle init` always pass in `databricks_dab_templates`**
+Use the other commands at your discretion.
+
+```bash
+Usage:
+  databricks bundle [command]
+
+Available Commands:
+  deploy      Deploy bundle
+  deployment  Deployment related commands
+  destroy     Destroy deployed bundle resources
+  generate    Generate bundle configuration
+  init        Initialize using a bundle template
+  open        Open a resource in the browser
+  run         Run a job or pipeline update
+  schema      Generate JSON Schema for bundle configuration
+  summary     Summarize resources deployed by this bundle
+  sync        Synchronize bundle tree to the workspace
+  validate    Validate configuration
+
+Flags:
+  -h, --help          help for bundle
+      --var strings   set values for variables defined in bundle config. Example: --var="foo=bar"
+
+Global Flags:
+      --debug            enable debug logging
+  -o, --output type      output type: text or json (default text)
+  -p, --profile string   ~/.databrickscfg profile
+  -t, --target string    bundle target to use (if applicable)
+
+
+Use "databricks bundle [command] --help" for more information about a command.
+```
+
+## Additional information can always be run using
+
+`databricks <command-group> | <command-group> <command-name> --help`

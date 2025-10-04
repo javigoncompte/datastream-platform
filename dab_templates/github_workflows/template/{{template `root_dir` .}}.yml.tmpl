@@ -1,0 +1,39 @@
+name: project_{{.project_name}}
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+      - task/*
+    paths:
+      - 'projects/{{.domain_name}}/{{.project_name}}/**'
+      - '.github/workflows/project_{{.project_name}}.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy-dev:
+    uses: ./.github/workflows/databricks_deploy.yml
+    with:
+      environment: dev
+      project_path: ./projects/{{.domain_name}}/{{.project_name}}
+      job_name: {{.project_name}}_job
+      deployed_by: ${{ github.actor }}
+      commit_sha:  ${{ github.sha }}
+    secrets:
+      DATABRICKS_HOST: {{`${{ secrets.DATABRICKS_HOST_DEV }}`}}
+      DATABRICKS_TOKEN: {{`${{ secrets.DATABRICKS_TOKEN_DEV }}`}}
+      
+  deploy-prod:
+    needs: deploy-dev
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/databricks_deploy.yml
+    with:
+      environment: prod
+      project_path: ./projects/{{.domain_name}}/{{.project_name}}
+      job_name: {{.project_name}}_job
+      deployed_by: ${{ github.actor }}
+      commit_sha:  ${{ github.sha }}
+    secrets:
+      DATABRICKS_HOST: {{`${{ secrets.DATABRICKS_HOST_PROD }}`}}
+      DATABRICKS_TOKEN: {{`${{ secrets.DATABRICKS_TOKEN_PROD }}`}}

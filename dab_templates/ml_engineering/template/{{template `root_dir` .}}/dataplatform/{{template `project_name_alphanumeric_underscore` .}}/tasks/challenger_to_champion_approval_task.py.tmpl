@@ -1,0 +1,25 @@
+import sys
+
+import mlflow
+
+registry_uri = "databricks-uc"
+mlflow.set_tracking_uri("databricks")
+mlflow.set_registry_uri(registry_uri)
+mlflow_client = mlflow.MlflowClient(registry_uri=registry_uri)
+model_name = sys.argv[1]
+model_version = sys.argv[2]
+tag_name = sys.argv[3]
+
+# fetch the model version's UC tags
+tags = mlflow_client.get_model_version(model_name, model_version).tags
+print(f"Tags: {tags}")
+# check if any tag matches the approval tag name
+if not any(tag == tag_name for tag in tags.keys()):
+    raise Exception("Model version not approved for deployment")
+else:
+    # if tag is found, check if it is approved
+    if tags.get(tag_name, "").lower() == "approved":
+        print("Model version approved for deployment")
+    else:
+        raise Exception("Model version not approved for deployment")
+

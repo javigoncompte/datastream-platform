@@ -1,0 +1,26 @@
+# define template variables
+
+{{ define "cloud__node_type_id" -}}
+i3.xlarge
+{{- end }}
+
+{{ define "model_name" -}}
+{{ .project_name }}
+{{- end }}
+
+{{ define "experiment_base_name" -}}
+{{ .project_name }}-experiment
+{{- end }}
+
+{{ define "project_name_alphanumeric_underscore" -}}
+{{- (regexp `-`).ReplaceAllString ((regexp `[^A-Za-z0-9_-]`).ReplaceAllString (print .project_name) ``) `_` -}}
+{{- end }}
+
+{{ define "root_dir" -}}
+projects/{{ .domain_name }}/{{ .project_name }}
+{{- end }}
+
+
+{{ define "domain_location" -}}
+{{ .domain_name }}
+{{- end }}

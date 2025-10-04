@@ -1,0 +1,17 @@
+# Terraform Variables for Service Principal Authentication
+# Copy this file to terraform.tfvars and fill in your values
+
+# Environment
+environment = "dev"
+project_name = "dataplatform-data-platform"
+
+# Service Principal Authentication (Databricks OAuth)
+databricks_client_id     = "your-databricks-service-principal-client-id"
+databricks_client_secret = "your-databricks-service-principal-client-secret"
+
+# ML Pool Configuration
+ml_pool_name        = "ml-pool-16-4-lts"
+ml_pool_node_type   = "i3.xlarge"
+ml_pool_min_idle    = 0
+ml_pool_max_capacity = 10
+ml_pool_idle_timeout = 15

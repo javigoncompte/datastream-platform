@@ -1,0 +1,343 @@
+---
+description: This is a comprehensive rule for helping developers set up their local environment for running notebooks or debugging python files. Covers environment setup, import errors, Databricks connectivity, and troubleshooting 
+alwaysApply: false
+
+---
+
+# Local Developer Environment Assistant
+
+This guide helps developers set up and troubleshoot their local Python environment for the VASA data platform, especially focusing on Databricks connectivity and common issues faced by junior developers.
+
+## 1. Configuration Files Reference
+
+### Core Configuration Files (VSCode/Cursor only)
+
+#### Debugging configurations
+@launch.json - Contains debug configurations with environment variables for Python scripts
+
+#### Settings Configurations  
+@settings.json - Contains VS Code/Cursor settings and environment variables for notebooks
+
+#### Available Recommended Extensions
+@extensions.json - Required extensions for optimal development experience
+
+#### Databricks CLI rule
+@databricks-cli.mdc - Guidelines for using Databricks CLI and bundles
+
+#### Databricks config file
+@.databrickscfg - **Located in HOME DIRECTORY** (`~/.databrickscfg` or use `find` command)
+
+#### Project setup information
+@readme.md - General project setup and configuration information
+
+---
+
+## 2. Environment Setup Fundamentals (For Junior Developers)
+
+### Understanding Python Virtual Environments
+**Why we use virtual environments:**
+- Isolates project dependencies from system Python
+- Prevents version conflicts between projects  
+- Ensures reproducible development environments
+- Required for Databricks Connect to work properly
+
+### Project Structure Overview
+This is a **monorepo** using:
+- **uv** for package management (replaces pip)
+- **uv workspace** Monorepo
+- **una** for building wheels from workspace packages
+- **Databricks Connect** for local development against Databricks clusters
+- **Virtual environment** at `.venv/` in project root
+
+### Key Environment Variables
+```bash
+# For Databricks connectivity
+DATABRICKS_CONFIG_FILE=~/.databrickscfg
+DATABRICKS_CONFIG_PROFILE=DEFAULT  # or dev-vasa, prod, etc.
+DATABRICKS_AUTH_TYPE=pat
+```
+
+---
+
+## 3. Pre-Setup Environment Verification
+
+Ask the name of the project and reads it pyproject.toml using `find`
+This will tell you the project name
+
+For Example:
+I'm working on projects/member/member_retention_probability_model
+
+```
+uv sync --dev --package member_retention_probability_model
+```
+
+To test databricks-connect use this after the sync:
+```
+uv run databricks-connect test
+```
+---
+
+## 4. Databricks Configuration Setup
+
+### Step 1: Verify Databricks config file exists
+```bash
+# Check if config file exists
+ls -la ~/.databrickscfg
+
+# If it doesn't exist, create it:
+touch ~/.databrickscfg
+nano ~/.databrickscfg
+```
+
+### Step 2: Verify config file has correct profiles
+The file should contain profiles like:
+```ini
+[DEFAULT]
+host = https://dbc-78c2ed4d-f375.cloud.databricks.com/
+auth_type = pat
+token = your_token_here
+serverless_compute_id = auto
+
+[dev-vasa]
+host = https://dbc-78c2ed4d-f375.cloud.databricks.com/
+auth_type = pat
+token = your_token_here
+serverless_compute_id = auto
+```
+
+### Step 3: Test Databricks connectivity
+```bash
+# Test connection with current profile
+databricks workspace list --profile DEFAULT
+
+# If this fails, check your token and host settings
+```
+
+---
+
+## 5. Configuration Consistency Check
+
+### Step 1: Verify settings.json matches .databrickscfg
+Check that `@settings.json` contains:
+```json
+"cursorpyright.nodeEnvVars": {
+  "DATABRICKS_CONFIG_PROFILE": "DEFAULT",  // Must match profile name
+  "DATABRICKS_AUTH_TYPE": "pat",
+  "DATABRICKS_CONFIG_FILE": "$HOME/.databrickscfg"  // Must point to correct file
+}
+```
+
+### Step 2: Verify launch.json matches .databrickscfg  
+Check that `@launch.json` debug configurations contain:
+```json
+"env": {
+  "DATABRICKS_CONFIG_FILE": "${userHome}/.databrickscfg",
+  "DATABRICKS_CONFIG_PROFILE": "DEFAULT",  // Must match profile name
+  "DATABRICKS_AUTH_TYPE": "pat"
+}
+```
+
+### Step 3: Ask user for profile preference
+If profile is not specified or doesn't exist:
+1. List available profiles from `.databrickscfg`
+2. Ask user which profile they want to use
+3. Default to "DEFAULT" if user is unsure
+4. Update both `settings.json` and `launch.json` accordingly
+
+---
+
+## 6. Execution Context Detection
+
+### Step 1: Identify file type being worked on
+Check the `@ActiveTab` or current file context:
+
+**If it's a Jupyter Notebook (.ipynb) IPYTHON:**
+- Uses environment variables from `cursorpyright.nodeEnvVars` in `@settings.json`
+- If user doesn't want to use DEFAULT
+  - The Kernel will use Databricks Extension that sets up .databricks folder.
+  - Kernel connects through Databricks extension
+- Cell execution happens in notebook environment
+
+**If it's a Python file (.py):**
+- Uses environment variables from debug configuration in `@launch.json` 
+- Execution happens through Python debugger
+- Can be run as script or debugged line by line
+
+**If it's a Python file with "# Databricks notebook source":**
+- Can be used both as notebook in Databricks UI and as Python script locally
+- Remove the header comment for wheel-based jobs
+- Keep the header for Databricks UI compatibility
+
+---
+
+## 7. Common Error Troubleshooting
+
+### Import Errors
+
+**Error:** `ModuleNotFoundError: No module named 'vasa.core'`
+**Solutions:**
+1. Check if virtual environment is active: `which python`
+2. Reinstall packages: `uv sync --all-packages --dev`
+3. Clean cache: `uv clean`
+4. Verify Python path includes packages: `python -c "import sys; print(sys.path)"`
+
+**Error:** `ImportError: cannot import name 'something' from 'vasa.package'`
+**Solutions:**
+1. Check if you're importing from the right package
+2. Verify the function/class exists: `python -c "from vasa.package import *; print(dir())"`
+3. Check for circular imports
+4. Rebuild packages: `uv sync --package member_retention_probability_model --dev`
+
+### Databricks Connection Errors
+
+**Error:** `DatabricksError: Cannot access credentials`
+**Solutions:**
+1. Verify `.databrickscfg` exists and has correct permissions: `ls -la ~/.databrickscfg`
+2. Check token is valid (not expired)
+3. Verify profile name matches in all config files
+4. Test connection: `databricks workspace list --profile YOUR_PROFILE`
+
+**Error:** `Connection timeout` or `Cannot connect to cluster`
+**Solutions:**
+1. Check if cluster is running in Databricks UI
+2. Verify `cluster_id` in config (if using cluster mode)
+3. Try `serverless_compute_id = auto` instead of specific cluster
+4. Check network connectivity
+
+### Environment Issues
+
+**Error:** Python shows system version instead of .venv version
+**Solutions:**
+1. Activate virtual environment: `source .venv/bin/activate`
+2. Restart VS Code/Cursor after activation
+3. Check Python interpreter path in VS Code: Ctrl+Shift+P → "Python: Select Interpreter"
+
+**Error:** `uv: command not found`
+**Solutions:**
+1. Install uv: `curl -LsSf https://astral.sh/uv/install.sh | sudo sh`
+2. Restart terminal
+3. Check PATH includes uv: `echo $PATH`
+
+---
+
+## 8. Step-by-Step Debugging Setup
+
+### Pre-Debugging Checklist
+Before starting any debugging session:
+
+1. **✅ Environment Check:**
+   ```bash
+   # Verify you're in project root
+   pwd
+   
+   # Verify virtual environment is active  
+   which python
+   
+   # Verify packages are installed
+   uv sync --package member_retention_probability_model --dev
+   ```
+
+2. **✅ Databricks Check:**
+   ```bash
+   # Test Databricks connection
+   databricks workspace list --profile DEFAULT
+   
+   # Verify config file
+   cat ~/.databrickscfg
+   ```
+
+3. **✅ Configuration Check:**
+   - Verify `DATABRICKS_CONFIG_PROFILE` matches in `settings.json` and `launch.json`
+   - Verify `DATABRICKS_CONFIG_FILE` points to correct location
+   - Check that profile exists in `.databrickscfg`
+
+### For Notebook Debugging (.ipynb files):
+1. Ensure Databricks extension is connected (bottom status bar should show connection)
+2. Select correct kernel (should show .venv Python)
+3. Environment variables come from `settings.json` → `cursorpyright.nodeEnvVars`
+4. Test with simple cell: `print("Hello from notebook")`
+
+### For Python Script Debugging (.py files):
+1. Set breakpoints in your Python file
+2. Press F5 or use "Run and Debug" panel
+3. Select "Python: Debug Current File" configuration
+4. Environment variables come from `launch.json` → debug configuration
+5. Test with simple print: `print("Hello from script")`
+
+---
+
+## 9. Quick Reference Commands
+
+### Environment Management
+```bash
+# Install/update package working on
+uv sync --dev --package {package_name}
+
+# Clean cache (when packages aren't updating)
+uv clean
+
+# Check what's installed
+uv pip list
+
+# See dependency tree
+uvx una tree
+```
+
+### Databricks Testing
+```bash
+# Test connection
+databricks workspace list --profile DEFAULT
+
+# List available profiles
+cat ~/.databrickscfg | grep '\['
+
+# Test specific profile
+databricks workspace list --profile dev-vasa
+
+# Validate bundle (if working on Databricks project)
+cd projects/your_project && databricks bundle validate --target local --profile DEFAULT
+```
+
+### Diagnostic Commands
+```bash
+# Check Python path and version
+python -c "import sys; print(f'Python: {sys.version}'); print(f'Path: {sys.path}')"
+
+# Test core imports
+python -c "import vasa.core, vasa.client; print('Imports successful')"
+
+# Check environment variables
+echo $DATABRICKS_CONFIG_PROFILE
+echo $DATABRICKS_CONFIG_FILE
+```
+
+---
+
+## 10. Visual Success Indicators
+
+### ✅ Everything is working correctly when you see:
+
+**In Terminal:**
+- uv run `databricks-connect test` runs correctly
+- Databricks commands work without errors
+
+**In VS Code/Cursor:**
+- Bottom status bar shows Databricks connection: "🔗 Connected to Databricks"
+- Python interpreter shows .venv path
+- No import errors in notebooks or Python files
+- Debug configurations work without connection errors
+
+**In Notebooks:**
+- Cells execute without import errors
+- Can access Databricks resources (if needed)
+- Kernel shows correct Python version
+
+### ⚠️ Warning signs to watch for:
+
+- Import errors mentioning missing modules
+- Databricks connection timeouts
+- Environment variables not being recognized
+- Debug sessions failing to start
+- Spark authentication errors because of spark connect
+
+---

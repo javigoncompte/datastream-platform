@@ -1,0 +1,62 @@
+"""Inference module for {{template `project_name_alphanumeric_underscore` .}} prediction."""
+
+from datetime import datetime
+
+import mlflow
+import pandas as pd
+import polars as pl
+from pyspark.sql.functions import StringType, col, lit, to_timestamp
+from pyspark.sql.functions import max as spark_max
+from dataplatform.core.logger import get_logger
+from dataplatform.core.spark_session import SparkSession
+from pyspark.sql import DataFrame
+
+logger = get_logger(__name__)
+
+### INPUT DATAFRAME ###
+
+
+# COMMAND ----------
+def create_input_df() -> DataFrame:
+    spark = SparkSession().get_spark_session()
+    
+    pass
+
+### PREDICTION ###
+
+# COMMAND ----------
+
+
+def predict_batch(
+    output_table_name: str,
+    model_alias: str,
+    model_name: str,
+) -> None:
+    """
+    Apply the model at the specified URI for batch inference on the table with name
+        input_table_name,
+    writing results to the table with name output_table_name
+    """
+    mlflow.login()
+    mlflow.set_tracking_uri("databricks")
+    mlflow.set_registry_uri("databricks-uc")
+    input_df = create_input_df()
+    print(input_df.schema)
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    model_uri = f"models:/{model_name}@{model_alias}"
+
+    mlflow_client = mlflow.MlflowClient(registry_uri="databricks-uc")
+    model_version = mlflow_client.get_model_version_by_alias(model_name, model_alias)
+    model = mlflow.pyfunc.load_model(model_uri)
+    logger.info(f"Loaded model from {model_uri}")
+    predictions = model.predict(input_df)
+    predictions = predictions.pandas_api().iloc[:, 11]
+    output_df = predictions.withColumn("model_id", lit(model_version)).withColumn(
+        "inference_timestamp", to_timestamp(lit(ts))
+    )
+    options = {"mergeSchema": "true"}
+    output_df.write.format("delta").mode("append").options(**options).saveAsTable(
+        output_table_name
+    )
+    logger.info(f"Saved predictions to {output_table_name}")
+

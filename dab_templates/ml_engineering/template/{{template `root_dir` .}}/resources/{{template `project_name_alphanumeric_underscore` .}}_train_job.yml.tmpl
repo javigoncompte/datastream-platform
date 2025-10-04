@@ -1,0 +1,42 @@
+
+# The train job for {{template `project_name_alphanumeric_underscore` .}}
+resources:
+  jobs:
+    {{template `project_name_alphanumeric_underscore` .}}_train_job:
+      name: {{template `project_name_alphanumeric_underscore` .}}_train_job       
+      job_clusters:
+        - job_cluster_key: ${var.job_cluster_key}
+          new_cluster:
+            spark_version: ${var.spark_version}
+            driver_node_type_id: "i3.xlarge"
+            node_type_id: "i3.xlarge"
+            autoscale:
+              min_workers: 2
+              max_workers: 4
+            spark_conf:
+              spark.databricks.delta.enableChangeDataFeed: "true"
+              spark.databricks.delta.schema.autoMerge.enabled: "true"
+              spark.databricks.delta.autoCompact.enabled: "true"
+              spark.databricks.delta.optimizeWrite.enabled: "true"
+      tasks:        
+        - task_key: Train
+          job_cluster_key: ${var.job_cluster_key}
+          max_retries: ${var.max_retries}
+          libraries:
+            - whl: ../dist/*.whl
+          spark_python_task:
+            python_file: ../dataplatform/{{template `project_name_alphanumeric_underscore` .}}/tasks/train_task.py
+            parameters:
+              - "{{`{{job.parameters.model_name}}`}}"
+              - "{{`{{job.parameters.deployment_job_id}}`}}"
+
+      parameters:
+        - name: model_name
+          default: ${bundle.name}
+        - name: deployment_job_id
+          default: ${resources.jobs.{{template `project_name_alphanumeric_underscore` .}}_deployment_job.id}
+      queue:
+        enabled: true
+
+      max_concurrent_runs: 1
+

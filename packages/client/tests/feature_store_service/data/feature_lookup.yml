@@ -1,0 +1,10 @@
+feature_lookups:
+  - feature_store_name: "feature_store.member.member_features"
+    lookup_key: "member_id"
+    feature_names:
+      - "checkin_last_30_days"
+      - "age_group"
+      - "membership_type"
+    timestamp_lookup_key: "created_at"
+    rename_outputs:
+      age_group: "demographic_age_group"

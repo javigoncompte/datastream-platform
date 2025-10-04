@@ -1,0 +1,5 @@
+{
+  "domain_name": "member",
+  "project_name": "penguins_classification",
+  "input_inference_table_name": "dev_gold.member.penguins_classification_predictions"
+}

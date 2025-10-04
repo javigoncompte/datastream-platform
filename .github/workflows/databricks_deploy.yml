@@ -1,0 +1,71 @@
+name: databricks_deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      project_path:
+        required: true
+        type: string
+      job_name:
+        required: true
+        type: string
+    secrets:
+      DATABRICKS_HOST:
+        required: true
+      DATABRICKS_TOKEN:
+        required: true
+
+env:
+  PYTHON_VERSION: '3.12.3'
+  DATABRICKS_CLI_VERSION: 'v0.261.0'
+  UV_VERSION: '0.6.17'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      DATABRICKS_CONFIG_PROFILE: ${{ inputs.environment }}
+      DATABRICKS_JOB_NAME: ${{ inputs.job_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/${{ env.DATABRICKS_CLI_VERSION }}/install.sh | sh
+          databricks -v
+
+      - name: Install dependencies
+        run: |
+          curl -fsSL https://github.com/astral-sh/uv/releases/download/${{ env.UV_VERSION }}/uv-installer.sh | sh
+          uv --version
+          uv sync --dev
+
+      - name: Setup Databricks Auth
+        run: |
+          databricks configure --host $DATABRICKS_HOST --token $DATABRICKS_TOKEN --profile $DATABRICKS_CONFIG_PROFILE
+
+      - name: Validate Bundle
+        working-directory: ${{ inputs.project_path }}
+        run: |
+          databricks bundle validate -t $DATABRICKS_CONFIG_PROFILE --var="deployed_by=${{ github.actor }}" --var="commit_sha=${{ github.sha }}"
+
+
+      - name: Deploy to Databricks
+        working-directory: ${{ inputs.project_path }}
+        run: |
+          databricks bundle deploy -t $DATABRICKS_CONFIG_PROFILE --var="deployed_by=${{ github.actor }}" --var="commit_sha=${{ github.sha }}"
+
+      - name: Run Databricks Job
+        if: inputs.environment == 'dev'
+        working-directory: ${{ inputs.project_path }}
+        run: databricks bundle run ${{ inputs.job_name }} -t ${{ inputs.environment }} -p ${{ inputs.environment }} --no-wait

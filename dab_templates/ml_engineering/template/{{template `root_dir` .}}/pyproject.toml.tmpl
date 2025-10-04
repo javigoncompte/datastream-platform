@@ -1,0 +1,50 @@
+[project]
+name = "{{template `project_name_alphanumeric_underscore` .}}"
+version = "0.0.0"
+description = "{{template `project_name_alphanumeric_underscore` .}}"
+authors = []
+requires-python = ">=3.12"
+dynamic = ["una"] # needed for hatch-una metadata hook to work
+dependencies = [
+    "transformation",
+    "client",
+    "core",
+    "{{template `project_name_alphanumeric_underscore` .}}",
+    "mlflow[databricks]",
+    "databricks-sdk",
+    "databricks-feature-engineering",
+]
+
+[dependency-groups]
+dev = [
+    "transformation",
+    "client",
+    "{{template `project_name_alphanumeric_underscore` .}}",
+    "core",
+    "ruff",
+    "polars",
+    "pre-commit",
+    "pyright",
+    "una",
+    "ipykernel",
+    "databricks-connect",
+    "nbformat",
+    "jupytext",
+    "pytest",
+    "pip",
+]
+
+[build-system]
+requires = ["hatchling", "hatch-una"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.hooks.una-build]
+[tool.hatch.metadata.hooks.una-meta]
+
+[tool.uv.sources]
+transformation = { workspace = true }
+core = { workspace = true }
+client = { workspace = true }

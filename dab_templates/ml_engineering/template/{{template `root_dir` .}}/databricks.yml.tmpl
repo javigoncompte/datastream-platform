@@ -1,0 +1,122 @@
+# This is a Databricks asset bundle definition for {{template `project_name_alphanumeric_underscore` .}}.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: {{template `project_name_alphanumeric_underscore` .}}
+
+variables:
+  alias:
+    description: "Alias for the model"
+    type: string
+    default: "challenger"
+  catalog_name:
+    description: "Catalog name for the model"
+    type: string
+    default: "dev_gold"
+  schema_name:
+    description: "Schema name for the model"
+    type: string
+    default: "{{template `domain_name` .}}"
+  predictions_table_name:
+    description: "Predictions table name"
+    type: string
+    default: "dev_gold.member.{{template `project_name_alphanumeric_underscore` .}}_predictions" # TODO: change to the correct table name
+  output_schema_name:
+    description: "Output schema name"
+    type: string
+    default: "dev_gold.{{template `domain_name` .}}"
+  job_cluster_key:
+    description: "Job cluster key"
+    type: string
+    default: "standard_pool"
+  spark_version:
+    description: "Spark version"
+    type: string
+    default: "16.4.x-scala2.12"
+  node_type_id:
+    description: "Node type id"
+    type: string
+    default: "i3.xlarge"
+  email_notification:
+    description: "Email notifications"
+    type: string
+    default: "test.databricks.errors@example.com"
+  max_retries:
+    description: "Max retries"
+    type: int
+    default: 1
+
+  serverless_environments:
+    description: "Serverless environments for the job"
+    type: complex
+    default:
+      - environment_key: default
+        spec:
+          environment_version: "3"
+          kind: "compute"
+          dependencies:
+            - "./dist/*.whl"
+presets:
+  tags:
+    "build": "{{template `project_name_alphanumeric_underscore` .}}"
+    "type": "ml"
+workspace:
+  root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+
+include:
+  - resources/*.yml
+  - resrouces/*/*.yml
+
+artifacts:
+  {{template `project_name_alphanumeric_underscore` .}}:
+    type: whl
+    build: uvx --from build pyproject-build --installer=uv --outdir=dist --wheel .
+targets:
+  local:
+    mode: development
+    variables:
+      max_retries: 0
+    default: true
+    workspace:
+      host: https://dbc-78c2ed4d-f375.cloud.databricks.com
+
+  dev:
+    mode: production
+    variables:
+      max_retries: 0
+    workspace:
+      host: https://dbc-78c2ed4d-f375.cloud.databricks.com/
+      root_path: /Workspace/Users/f2feaa0d-5e6b-4e44-8d3f-204318155504/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: f2feaa0d-5e6b-4e44-8d3f-204318155504
+    permissions:
+      - level: CAN_MANAGE
+        user_name: ${workspace.current_user.userName}
+      - level: CAN_MANAGE
+        group_name: dabs
+      - level: CAN_RUN
+        group_name: users
+
+  prod:
+    mode: production
+
+    workspace:
+      host: https://dbc-28f5121a-2591.cloud.databricks.com/
+      root_path: /Workspace/Users/21789ef2-aab8-4c80-89d5-c72877b9d200/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      max_retries: 1
+      email_notification: "databricks.errors@example.com"
+      catalog_name: "gold"
+      schema_name: "{{template `domain_name` .}}"
+      predictions_table_name: "gold.{{template `domain_name` .}}.{{template `project_name_alphanumeric_underscore` .}}_predictions"
+      output_schema_name: "gold.{{template `domain_name` .}}"
+      alias: "champion"
+    run_as:
+      service_principal_name: 21789ef2-aab8-4c80-89d5-c72877b9d200
+    permissions:
+      - level: CAN_MANAGE
+        group_name: prod-dabs
+      - level: CAN_MANAGE
+        group_name: prod-admins
+      - level: CAN_VIEW
+        group_name: users
+
