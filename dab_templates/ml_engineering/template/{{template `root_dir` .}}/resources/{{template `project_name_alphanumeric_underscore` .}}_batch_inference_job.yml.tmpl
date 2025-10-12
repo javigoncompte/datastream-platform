@@ -3,6 +3,9 @@ resources:
   jobs:
     {{template `project_name_alphanumeric_underscore` .}}_batch_inference_job:
       name: {{template `project_name_alphanumeric_underscore` .}}_batch_inference_job
+      email_notifications:
+        on_failure:
+          - ${var.email_notification}
       job_clusters:
         - job_cluster_key: ${var.job_cluster_key}
           new_cluster:
@@ -12,6 +15,12 @@ resources:
             autoscale:
               min_workers: 2
               max_workers: 4
+            aws_attributes:
+              first_on_demand: 1
+              availability: "SPOT_WITH_FALLBACK"
+              zone_id: "auto"
+              spot_bid_price_percent: 100
+              ebs_volume_count: 0
             spark_conf:
               spark.databricks.delta.enableChangeDataFeed: "true"
               spark.databricks.delta.schema.autoMerge.enabled: "true"
@@ -25,7 +34,7 @@ resources:
         - name: model_name
           default: ${resources.registered_models.model.catalog_name}.${resources.registered_models.model.schema_name}.${resources.registered_models.model.name}
       tasks:
-        - task_key: BatchInference
+        - task_key: batch_inference_task
           job_cluster_key: ${var.job_cluster_key}
           max_retries: ${var.max_retries}
           libraries:

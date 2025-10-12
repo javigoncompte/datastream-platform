@@ -1,16 +1,18 @@
 import sys
 
+from dataplatform.core.argparser import get_arguments
 from dataplatform.{{template `project_name_alphanumeric_underscore` .}}.model_deployment.deploy import (
     deploy_model_version,
 )
-from dataplatform.{{template `project_name_alphanumeric_underscore` .}}.train.train_model import train_model
+from vasa.{{template `project_name_alphanumeric_underscore` .}}.train.model import run_model_training
 
-model_name = sys.argv[1]
-deployment_job_id = sys.argv[2]
+args = get_arguments(sys.argv)
+model_name = args[0]
+deployment_job_id = args[1]
 
 
 def main():
-    model_uri, _metrics = train_model()
+    model_uri, _metrics = run_model_training()
     registered_model = deploy_model_version(
         model_name=model_name,
         deployment_job_id=deployment_job_id,
@@ -21,3 +23,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

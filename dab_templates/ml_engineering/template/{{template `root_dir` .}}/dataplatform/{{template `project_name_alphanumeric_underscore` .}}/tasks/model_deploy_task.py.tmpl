@@ -1,0 +1,17 @@
+import sys
+
+import mlflow
+from dataplatform.core.argparser import get_arguments
+from dataplatform.{{template `project_name_alphanumeric_underscore` .}}.model_deployment.deploy import (
+    remove_alias,
+    set_alias,
+)
+
+mlflow_client = mlflow.MlflowClient()
+
+args = get_arguments(sys.argv)
+model_name = args[0]
+model_version = args[1]
+
+set_alias(mlflow_client, model_name, "champion", model_version)
+remove_alias(mlflow_client, model_name, "challenger")

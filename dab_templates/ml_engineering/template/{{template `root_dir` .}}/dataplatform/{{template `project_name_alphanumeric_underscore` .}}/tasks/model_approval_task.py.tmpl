@@ -1,0 +1,19 @@
+import sys
+
+import mlflow
+from dataplatform.core.argparser import get_arguments
+from dataplatform.core.logger import get_logger
+
+logger = get_logger(__name__)
+
+args = get_arguments(sys.argv)
+model_name = args[0]
+model_version = args[1]
+
+mlflow_client = mlflow.MlflowClient()
+model_versions = mlflow_client.search_model_versions(f"name='{model_name}'")
+latest_model = model_versions[0]
+
+if latest_model:
+    logger.info(f"Model: {latest_model.name}")
+    logger.info(f"Latest version: {latest_model.version}")

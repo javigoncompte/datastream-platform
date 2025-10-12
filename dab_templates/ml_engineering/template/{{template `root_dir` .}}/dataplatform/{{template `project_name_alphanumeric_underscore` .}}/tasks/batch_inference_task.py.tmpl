@@ -1,13 +1,14 @@
 import sys
 
-from dataplatform.core.argparser import get_arguments
-from dataplatform.core.logger import get_logger
-from dataplatform.{{template `project_name_alphanumeric_underscore` .}}.inference.predict import predict_batch
+from vasa.core.argparser import get_arguments
+from vasa.core.logger import get_logger
+from vasa.{{template `project_name_alphanumeric_underscore` .}}.inference.predict import predict_batch
 
 logger = get_logger(__name__)
 
 
-def main():
+def main() -> None:
+    """Main function for batch inference task."""
     args = get_arguments(sys.argv)
     output_table_name = args[0]
     model_alias = args[1]
@@ -25,4 +26,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

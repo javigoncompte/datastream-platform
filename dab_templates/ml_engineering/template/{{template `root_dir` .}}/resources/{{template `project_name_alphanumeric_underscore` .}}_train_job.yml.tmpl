@@ -3,7 +3,13 @@
 resources:
   jobs:
     {{template `project_name_alphanumeric_underscore` .}}_train_job:
-      name: {{template `project_name_alphanumeric_underscore` .}}_train_job       
+      name: {{template `project_name_alphanumeric_underscore` .}}_train_job
+      queue:
+        enabled: true
+      max_concurrent_runs: 1
+      email_notifications:
+        on_failure:
+          - ${var.email_notification}    
       job_clusters:
         - job_cluster_key: ${var.job_cluster_key}
           new_cluster:
@@ -13,19 +19,25 @@ resources:
             autoscale:
               min_workers: 2
               max_workers: 4
+            aws_attributes:
+              first_on_demand: 1
+              availability: "SPOT_WITH_FALLBACK"
+              zone_id: "auto"
+              spot_bid_price_percent: 100
+              ebs_volume_count: 0
             spark_conf:
               spark.databricks.delta.enableChangeDataFeed: "true"
               spark.databricks.delta.schema.autoMerge.enabled: "true"
               spark.databricks.delta.autoCompact.enabled: "true"
               spark.databricks.delta.optimizeWrite.enabled: "true"
       tasks:        
-        - task_key: Train
+        - task_key: model_train_task
           job_cluster_key: ${var.job_cluster_key}
           max_retries: ${var.max_retries}
           libraries:
             - whl: ../dist/*.whl
           spark_python_task:
-            python_file: ../dataplatform/{{template `project_name_alphanumeric_underscore` .}}/tasks/train_task.py
+            python_file: ../dataplatform/{{template `project_name_alphanumeric_underscore` .}}/tasks/model_train_task.py
             parameters:
               - "{{`{{job.parameters.model_name}}`}}"
               - "{{`{{job.parameters.deployment_job_id}}`}}"
@@ -35,8 +47,3 @@ resources:
           default: ${bundle.name}
         - name: deployment_job_id
           default: ${resources.jobs.{{template `project_name_alphanumeric_underscore` .}}_deployment_job.id}
-      queue:
-        enabled: true
-
-      max_concurrent_runs: 1
-

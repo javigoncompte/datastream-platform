@@ -2,18 +2,18 @@
 
 # COMMAND ----------
 from typing import Any, Dict
+
+import altair as alt
 import mlflow
 import pandas as pd
-import mlflow.data
-import altair as alt
-import numpy as np
 import polars as pl
-from mlflow.models.signature import infer_signature
 from dataplatform.core.logger import get_logger
 from dataplatform.core.mlflow_experiment import setup_mlflow_experiment
 
 logger = get_logger(__name__)
-{{template `project_name_alphanumeric_underscore` .}}_mlflow = setup_mlflow_experiment("{{template `project_name_alphanumeric_underscore` .}}")
+model_experiment = setup_mlflow_experiment(
+    "{{template `project_name_alphanumeric_underscore` .}}", autolog_modules=["pyfunc"]
+)
 
 # COMMAND ----------
 # ==============================================================================
@@ -22,25 +22,64 @@ logger = get_logger(__name__)
 # All tunable parameters should be defined here.
 # Example:
 # PARAMS = {"C": 1.0, "penalty": "l1", "solver": "liblinear"}
-# ==============================================================================
-# DATA PREPARATION
-# ==============================================================================
+
 
 # COMMAND ----------
+# ==============================================================================
+# PLOTTING
+# ==============================================================================
+
+
+def plot_predictions_example(preds: pd.DataFrame) -> "alt.Chart":
+    """Example function to plot model predictions."""
+
+    chart = (
+        alt.Chart(preds)
+        .mark_bar()
+        .encode(x="category", y="value")
+        .properties(title="Example Predictions")
+    )
+    return chart
+
+
+def save_and_log_chart(chart: "alt.Chart", filename: str) -> None:
+    """Save an Altair chart to a file and log it to MLflow."""
+    chart.save(filename, format="png", scale_factor=2)
+    mlflow.log_image(filename, f"{filename}.png")
+
+
+def log_plots_to_mlflow(charts: Dict[str, "alt.Chart"]) -> None:
+    """Log a dictionary of Altair charts to MLflow."""
+    logger.info("Logging plots to MLflow")
+    for filename, chart in charts.items():
+        save_and_log_chart(chart, filename)
+
+
+# COMMAND ----------
+# ==============================================================================
+# Preprocessing
+# ==============================================================================
+
 
 def create_train_dataset() -> pd.DataFrame:
     """Load and prepare the training dataset."""
-    logger.info("Creating training dataset")
+    logger.info("Created training dataset")
 
     pass
 
 
-# ==============================================================================
-# HELPER FUNCTIONS
-# ==============================================================================
+def preprocessing_data(df: pd.DataFrame) -> Dict[str, Any]:
+    """Process features for the model."""
+    logger.info("Running preprocessing")
+    # TODO: Implement preprocessing.
+
+    pass
+
 
 # COMMAND ----------
-
+# ==============================================================================
+# MODEL TRAINING
+# ==============================================================================
 class Model(mlflow.pyfunc.PythonModel):
     def __init__(self, model, transformer):
         self.fitted_model = model
@@ -61,204 +100,49 @@ class Model(mlflow.pyfunc.PythonModel):
             return self.fitted_model.predict(model_input)
 
 
-
-
-# ==============================================================================
-# PLOTTING
-# ==============================================================================
-
-# COMMAND ----------
-
-
-def plot_predictions_example(preds: pd.DataFrame) -> "alt.Chart":
-    """Example function to plot model predictions."""
-    import altair as alt
-
-    chart = alt.Chart(preds).mark_bar().encode(x="category", y="value").properties(title="Example Predictions")
-    return chart
-
-
-def save_and_log_chart(chart: "alt.Chart", filename: str) -> None:
-    """Save an Altair chart to a file and log it to MLflow."""
-    chart.save(filename, format="png", scale_factor=2)
-    mlflow.log_image(filename, f"{filename}.png")
-
-
-def log_plots_to_mlflow(charts: Dict[str, "alt.Chart"]) -> None:
-    """Log a dictionary of Altair charts to MLflow."""
-    logger.info("Logging plots to MLflow")
-    for filename, chart in charts.items():
-        save_and_log_chart(chart, filename)
-
-
-# ==============================================================================
-# Preprocessing DATA
-# ==============================================================================
-
-# COMMAND ----------
-
-
-def preprocessing_data(df: pd.DataFrame) -> Dict[str, Any]:
-    """Process features for the model."""
-    logger.info("Running feature engineering")
-    # TODO: Implement your feature engineering logic here.
-    # Example:
-    # X = df.drop("target", axis=1)
-    # y = df["target"]
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    # return {"X_train": X_train, "X_test": X_test, "y_train": y_train, "y_test": y_test}
+def build_model():
+    # TODO: Implement the model
     pass
 
 
-# ==============================================================================
-# MODEL TRAINING
-# ==============================================================================
-
-# COMMAND ----------
-
 # Model will be saved to mlflow under {{template `project_name_alphanumeric_underscore` .}}
 # in Experiments Tab in Databricks
-def train_model() -> Tuple[Model, pd.DataFrame, pd.DataFrame]:
-    """Train the survival model."""
+def train_model() -> Any:
+    """Train the model and return training results."""
     logger.info("Starting model training")
 
     df = create_train_dataset()
-    logger.info(f"Successfully loaded training data with {len(df.columns)} columns.")
-
     train_data = preprocessing_data(df)
-    x_train = train_data["x_train"]
-    x_test = train_data["x_test"]
-    y_train = train_data["y_train"]
-    y_test = train_data["y_test"]
-    transformer = train_data["transformer"]
-    logger.info(
-        f"Feature engineering complete. Train shape: {x_train.shape}, \
-        Test shape: {x_test.shape} \
-        Train columns: {x_train.columns}, \
-        Test columns: {x_test.columns}"
-    )
+    model = build_model()
 
-    base_model = XGBSEKaplanTree(PARAMS)
-
-    xgbse_model = XGBSEBootstrapEstimator(base_model, n_estimators=N_ESTIMATORS)
-
-    logger.info("Fitting XGBSEBootstrapEstimator model...")
-    xgbse_model.fit(
-        x_train,
-        y_train,
-        time_bins=TIME_BINS,
-        ci_width=CONFIDENCE_INTERVAL,  # confidence interval
-    )
-    survival_model = Model(xgbse_model, transformer)
-    logger.info("Model fitting complete.")
-    return survival_model, y_test, x_test
+    # TODO: Implement actual training logic
+    # Return model and any training metrics
+    return model, train_data
 
 
 # COMMAND ----------
 # ==============================================================================
-# MODEL Logging and Evaluation
+# Model Logging and Evaluation
 # ==============================================================================
 
 
-
-@survival_model_experiment
-def log_evaluate_model(
-    model: Model,
-    y_test: pd.DataFrame,
-    x_test: pd.DataFrame,
-) -> Tuple[str, dict[str, Any]]:
-    logger.info("Generated predictions for test sets.")
-    preds_test, upper_ci_test, lower_ci_test = model.predict(
-        model_input=x_test, params={"return_ci": True}
-    )
-    mlflow.log_params(PARAMS)
-    logger.info("Logging model and metrics to MLflow...")
-    signature = infer_signature(x_test, preds_test)
-    model_info = mlflow.pyfunc.log_model(
-        python_model=model,
-        name="{{template `project_name_alphanumeric_underscore` .}}",
-        signature=signature,
-        extra_pip_requirements=["code/{{template `project_name_alphanumeric_underscore` .}}-0.0.0-py3-none-any.whl"],
-        code_paths=[
-            "../../../../artifacts/.internal/{{template `project_name_alphanumeric_underscore` .}}-0.0.0-py3-none-any.whl"
-        ],
-    )
-
-    # Create visualization plots
-    chart1 = plot_survival_probability(preds_test, upper_ci_test, lower_ci_test)
-    interval_probs = survival_model.predict(
-        model_input=x_test, params={"return_interval_probs": True}
-    )
-    chart2 = plot_interval_probabilities(interval_probs)
-    chart3 = plot_mean_survival_probability(preds_test)
-
-    # Log plots to MLflow
-    charts_to_log = {
-        "./survival_probability_plot.png": chart1,
-        "./interval_probabilities.png": chart2,
-        "./mean_survival_probability.png": chart3,
-    }
-    logger.info("Logging plots to MLflow...")
-    log_plots_to_mlflow(charts_to_log)
-
-    logger.info("Calculating metrics...")
-    concordance_index_test = concordance_index(y_test, preds_test)
-    approx_brier_score_test = approx_brier_score(y_test, preds_test, aggregate="mean")
-    dist_calibration_score_test = dist_calibration_score(
-        y_test, preds_test, returns="pval"
-    )
-
-    logger.info(
-        f"Metrics calculated - C-index: {concordance_index_test}, "
-        f"Brier: {approx_brier_score_test}, D-cal: {dist_calibration_score_test}"
-    )
-
-    logger.info("Logging confidence interval datasets to MLflow...")
-
-    lower_ci_dataset = mlflow.data.from_pandas(
-        lower_ci_test,
-        source="xgbse_bootstrap_estimator",
-        name="lower_confidence_intervals",
-    )
-
-    upper_ci_dataset = mlflow.data.from_pandas(
-        upper_ci_test,
-        source="xgbse_bootstrap_estimator",
-        name="upper_confidence_intervals",
-    )
-
-    # Create dataset for time bins
-    time_bins_df = pd.DataFrame({"time_bins": TIME_BINS})
-    time_bins_dataset = mlflow.data.from_pandas(
-        time_bins_df,
-        source="model_configuration",
-        name="time_bins",
-    )
-
-    mlflow.log_input(lower_ci_dataset, context="confidence_intervals")
-    mlflow.log_input(upper_ci_dataset, context="confidence_intervals")
-    mlflow.log_input(time_bins_dataset, context="model_configuration")
-
-    metrics = {
-        "n_estimators": N_ESTIMATORS,
-        "confidence_interval": CONFIDENCE_INTERVAL,
-        "c-index-test": concordance_index_test,
-        "brier_score-test": approx_brier_score_test,
-        "d_calibration-test": dist_calibration_score_test,
-    }
-
-    logger.info(f"Final metrics to log: {metrics}")
-    mlflow.log_metrics(metrics, model_id=model_info.model_id)
-    return model_info.model_uri, metrics
+@model_experiment
+def log_evaluate_model() -> Any:
+    """Log model evaluation metrics and artifacts."""
+    # TODO: log_params, log_metrics, log_input, log_model
+    # Return model URI and metrics
+    return "model_uri", {}
 
 
 # COMMAND ----------
-
-
-def run_model_training():
-    model, y_test, x_test = train_model()
-    model_uri, metrics = log_evaluate_model(model, y_test, x_test)
-    logger.info(f"Model URI: {model_uri}")
-    logger.info(f"Metrics: {metrics}")
-    return model_uri, metrics
+def run_model_training() -> Any:
+    # TODO: Implement train_model()
+    train_result = train_model()
+    
+    # TODO: Implement log_evaluate_model()
+    evaluation_result = log_evaluate_model()
+    
+    logger.info(f"Training completed: {train_result}")
+    logger.info(f"Evaluation completed: {evaluation_result}")
+    return train_result, evaluation_result
 

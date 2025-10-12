@@ -4,24 +4,29 @@ resources:
     {{template `project_name_alphanumeric_underscore` .}}_deployment_job:
       name: {{template `project_name_alphanumeric_underscore` .}}_deployment_job
       environments: ${var.serverless_environments}
+      queue:
+        enabled: true
+      max_concurrent_runs: 1
+      email_notifications:
+        on_failure:
+          - ${var.email_notification}
       tasks:
-        - task_key: Approval_Check
+        - task_key: model_approval_task
           environment_key: default
           max_retries: 0
           spark_python_task:
-            python_file: ../dataplatform/{{template `project_name_alphanumeric_underscore` .}}/tasks/challenger_to_champion_approval_task.py
+            python_file: ../dataplatform/{{template `project_name_alphanumeric_underscore` .}}/tasks/model_approval_task.py
             parameters:
               - "{{`{{job.parameters.model_name}}`}}"
               - "{{`{{job.parameters.model_version}}`}}"
-              - "approval_check"
 
-        - task_key: Deployment
+        - task_key: model_deploy_task
           environment_key: default
           depends_on:
-            - task_key: Approval_Check
+            - task_key: model_approval_task
           max_retries: 0
           spark_python_task:
-            python_file: ../dataplatform/{{template `project_name_alphanumeric_underscore` .}}/tasks/deploy_champion_uc_task.py
+            python_file: ../dataplatform/{{template `project_name_alphanumeric_underscore` .}}/tasks/model_deploy_task.py
             parameters:
               - "{{`{{job.parameters.model_name}}`}}"
               - "{{`{{job.parameters.model_version}}`}}"
@@ -33,9 +38,4 @@ resources:
           default: ""
         - name: deployment_job_id
           default: "{{`{{job.id}}`}}"
-
-      queue:
-        enabled: true
-
-      max_concurrent_runs: 1
 
