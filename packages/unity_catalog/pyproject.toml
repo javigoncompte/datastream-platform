@@ -12,7 +12,7 @@ name = "unity-catalog"
 version = "0.1.0"
 description = "Unity Catalog Library for a Data Platform"
 authors = []
-requires-python = "~=3.13"
+requires-python = ">=3.13,<3.15"
 dynamic = ["una"]
 
 [build-system]
@@ -20,7 +20,7 @@ requires = ["hatchling", "hatch-una>=0.5.1"]
 build-backend = "hatchling.build"
 
 [dependency-groups]
-dev = ["basedpyright", "pytest", "ruff"]
+dev = ["pytest", "ruff"]
 polars = ["polars>=1.31.0"]
 
 [tool.uv.sources]

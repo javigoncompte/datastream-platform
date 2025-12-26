@@ -1,0 +1,45 @@
+[project]
+dependencies = ["unity_catalog", "polars"]
+name = "datastream"
+authors = []
+requires-python = ">=3.13,<3.15"
+dynamic = ["una", "version"]               # needed for hatch-una metadata hook to work
+
+
+[build-system]
+requires = ["hatchling", "hatch-una", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[dependency-groups]
+dev = ["pytest", "ruff", "ty"]
+
+[project.entry-points.packages]
+main = "datastream.main:main"
+
+[tool.uv.sources]
+
+[tool.uv.sources.unity_catalog]
+workspace = true
+[tool.hatch.build.hooks.una-build]
+[tool.hatch.metadata.hooks.una-meta]
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+vsc = "git"
+latest-tag = true
+tag-branch = "main"
+style = "semver"
+format = """
+{%- if branch != main -%}
+    {{serialize_semver(base)}}}
+{%- else -%}
+    {{serialize_semver(base, branch, distance, metadata=[commit])}}
+{%- endif -%}
+"""
+override-dependencies = [
+    # pyspark package conflicts with 'databricks-connect'
+    "pyspark; sys_platform == 'never'",
+]
