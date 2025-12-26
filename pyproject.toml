@@ -137,7 +137,6 @@ extend-select = [
     "F706",    # return-outside-function
     "F704",    # yield-outside-function
 ]
-extend-select = ["W291"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["dataplatform"]
