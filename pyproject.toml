@@ -17,19 +17,29 @@ dev = [
     "ruff",
     "pip>=25.0.1",
     "una>=0.6.1",
-    "marimo>=0.13.15",
+    "marimo",
     "uv-dynamic-versioning>=0.8.2",
     "databricks-connect~=16.4.1",
-    "databricks-labs-dqx>=0.6.0",
-    "databricks-labs-pytester>=0.7.2",
-    "pyarrow>=22.0.0",
-    "ty>=0.0.5",
+    "pyarrow",
+    "ty",
+    "core",
+    "client",
+    "transformation",
+    "unity-catalog",
+    "evalgen",
 ]
 [tool.una]
 namespace = "dataplatform"
 
 [tool.uv.workspace]
-members = ["libs/*", "packages/*"]
+members = ["projects/*/*", "packages/*"]
+
+[tool.uv.sources]
+core = { workspace = true }
+client = { workspace = true }
+transformation = { workspace = true }
+unity-catalog = { workspace = true }
+evalgen = { workspace = true }
 
 [tool.ruff]
 extend-exclude = [
@@ -72,39 +82,6 @@ fix = true
 show-fixes = true
 line-length = 88
 indent-width = 4
-
-
-[tool.pyright]
-allowedUntypedLibraries = ["fastcore", "pyspark", "mlflow"]
-analyzeUnannotatedFunctions = false
-reportMissingTypeStubs = "none"
-reportMissingImports = "error"
-reportInvalidTypeForm = "none"
-reportAssignmentType = "none"
-reportWildcardImportFromLibrary = "warning"
-reportAttributeAccessIssue = "warning"
-reportImplicitOverride = "none"
-reportUninitializedInstanceVariable = "warning"
-reportAny = "none"
-typeCheckingMode = "basic"
-reportUnusedCallResult = "warning"
-reportUnknownVariableType = "warning"
-reportIgnoreCommentWithoutRule = "warning"
-exclude = [
-    "*.ipynb",
-    "*.ipynb_checkpoints",
-    "projects/*/explore/**/*",
-    "projects/*/scratch/**/*",
-    "**/node_modules",
-    "**/__pycache__",
-    "**/.*",
-]
-ignore = [
-    "projects/*/explore/**/*",
-    "projects/*/scratch/**/*",
-    "notebooks/",
-    "dev_tools/",
-]
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
@@ -147,7 +124,7 @@ testpaths = ["libs/*", "packages/*", "platform/*"]
 addopts = ""
 
 [tool.ty.environment]
-python = " ./.venv/bin/python"
-python-version = "3.13.11"
+python = "./.venv/bin/python"
+python-version = "3.13"
 [tool.ty.rules]
 unused-ignore-comment = "warn"

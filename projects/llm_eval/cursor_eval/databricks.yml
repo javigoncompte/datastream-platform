@@ -1,0 +1,90 @@
+# This is a Databricks asset bundle definition for cursor_eval.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: cursor_eval
+
+variables:
+  deployed_by:
+    type: string
+    default: "unknown"
+  commit_sha:
+    type: string
+    default: "unknown"
+
+presets:
+  tags:
+    "build": "cursor_eval"
+    "deployed_by": "${var.deployed_by}"
+    "commit_sha": "${var.commit_sha}"
+    "env": "${bundle.target}"
+
+variables:
+  job_pause_status:
+    type: string
+    default: "PAUSED"
+  serverless_environments:
+    description: "Serverless environments for the job"
+    type: complex
+    default:
+      - environment_key: default
+        spec:
+          client: "3"
+          dependencies:
+            - "./dist/*.whl"
+  deployed_by:
+    description: Who deployed this job
+    default: ${workspace.current_user.userName}
+  commit_sha:
+    description: Git commit for this deploy
+    default: unknown
+    
+workspace:
+  root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+
+include:
+- resources/*.yml
+
+artifacts:
+    cursor_eval:
+      type: whl
+      build: uvx --from build pyproject-build --installer=uv --outdir=dist --wheel .
+
+targets:
+  local:
+      mode: development
+      default: true
+      workspace:
+        host: https://dbc-78c2ed4d-f375.cloud.databricks.com/
+  dev:
+      mode: production
+      variables:
+        job_pause_status: PAUSED
+      workspace:
+        host: https://dbc-78c2ed4d-f375.cloud.databricks.com/
+        root_path: /Workspace/Users/f2feaa0d-5e6b-4e44-8d3f-204318155504/.bundle/${bundle.name}/${bundle.target}
+      run_as:
+        service_principal_name: f2feaa0d-5e6b-4e44-8d3f-204318155504
+      permissions:
+      - level: CAN_MANAGE
+        user_name: ${workspace.current_user.userName}
+      - level: CAN_MANAGE
+        group_name: dabs
+      - level: CAN_RUN
+        group_name: users
+
+  prod:
+    mode: production
+    variables:
+      job_pause_status: UNPAUSED
+    workspace:
+      host: https://dbc-28f5121a-2591.cloud.databricks.com/
+      root_path: /Workspace/Users/21789ef2-aab8-4c80-89d5-c72877b9d200/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      service_principal_name: 21789ef2-aab8-4c80-89d5-c72877b9d200
+    permissions:
+      - level: CAN_MANAGE_RUN
+        group_name: prod-dabs
+      - level: CAN_MANAGE
+        group_name: prod-admins
+      - level: CAN_VIEW
+        group_name: users

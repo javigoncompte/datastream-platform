@@ -18,7 +18,7 @@ from .table_metadata import (
 T = TypeVar("T")
 
 
-def with_delta_table(func: Callable[..., T]):  # pyright: ignore[reportUnknownParameterType]
+def with_delta_table(func: Callable[..., T]):
     """Decorator that provides DeltaTable instance to the decorated function.
 
     Args:
@@ -31,12 +31,12 @@ def with_delta_table(func: Callable[..., T]):  # pyright: ignore[reportUnknownPa
     @wraps(func)
     def wrapper(table_name: str, *args, **kwargs):
         spark: SparkSession = Spark().spark_session
-        delta_table = DeltaTable.forName(spark, table_name)  # pyright: ignore[reportCallIssue]
+        delta_table = DeltaTable.forName(spark, table_name)
         wrapper.table_name = table_name
         wrapper.delta_table = delta_table
         return func(delta_table, *args, **kwargs)
 
-    return wrapper  # pyright: ignore[reportUnknownVariableType]
+    return wrapper
 
 
 def get_metadata_provider(table_name: str) -> DeltaMetadataProvider:

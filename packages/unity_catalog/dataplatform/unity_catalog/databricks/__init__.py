@@ -1,4 +1,3 @@
-# pyright: reportUnknownVariableType=false
 from .table import (
     delete,
     generate_table_manifest,

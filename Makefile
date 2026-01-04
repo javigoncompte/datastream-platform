@@ -13,7 +13,7 @@ lint-check:
 	uv run ruff check
 
 check:
-	uv run basedpyright
+	uv run ty check
 
 test:
 	uv run pytest

@@ -145,7 +145,7 @@ def process_test_cases(
                 test_case, experiment_name, endpoint_name
             )
             final_test_cases.append(updated_test_case)
-    return final_test_cases, run_id  # pyright: ignore[reportPossiblyUnboundVariable ]
+    return final_test_cases, run_id
 
 
 def get_output_from_agent(
@@ -184,4 +184,4 @@ def get_output_from_agent(
                 responses.append(
                     f"No response from agent for test case: {test_case.model_dump()}"
                 )
-    return responses, run_id  # pyright: ignore[reportPossiblyUnboundVariable ]
+    return responses, run_id

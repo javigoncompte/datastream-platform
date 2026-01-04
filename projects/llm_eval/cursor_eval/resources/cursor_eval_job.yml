@@ -1,0 +1,24 @@
+resources:
+  jobs:
+    cursor_eval_job:
+      environments: ${var.serverless_environments}
+      name: cursor_eval_job
+      timeout_seconds: 2400
+      max_concurrent_runs: 1
+      queue:
+        enabled: false
+      schedule:
+        quartz_cron_expression: 0 0 0 * * ?
+        timezone_id: UTC
+        pause_status: ${var.job_pause_status}
+      tasks:
+        - task_key: main_task
+          environment_key: default
+          spark_python_task:
+            python_file: ../dataplatform/cursor_eval/tasks/silver_cursor_eval_transform_task.py
+        - task_key: qa_task
+          environment_key: default
+          depends_on:
+            - task_key: main_task
+          spark_python_task:
+            python_file: ../dataplatform/cursor_eval/tasks/silver_cursor_eval_qa_task.py

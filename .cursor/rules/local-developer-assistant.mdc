@@ -1,6 +1,6 @@
 ---
 description: This is a comprehensive rule for helping developers set up their local environment for running notebooks or debugging python files. Covers environment setup, import errors, Databricks connectivity, and troubleshooting 
-alwaysApply: false
+alwaysApply: true 
 
 ---
 
@@ -267,6 +267,28 @@ Before starting any debugging session:
 ---
 
 ## 9. Quick Reference Commands
+
+### Dependency Management in Monorepo
+
+This workspace uses **uv workspaces** with **una** for building wheels.
+When adding a new dependency, **always scope it to the specific package** to avoid bloating other packages:
+
+```bash
+# Correct: Add dependency to a specific package
+uv add <library> --package <package_name>
+
+# Examples:
+uv add emoji --package cursor_eval        # Only cursor_eval gets emoji
+uv add polars --package transformation    # Only transformation gets polars  
+uv add requests --package client          # Only client gets requests
+
+# Wrong: Don't add globally (affects entire workspace)
+uv add <library>
+```
+
+**Finding package names:** Check the `name` field in each `pyproject.toml`:
+- `packages/` - Shared libraries (client, core, transformation, evalgen, unity_catalog)
+- `projects/` - Deployable applications/jobs (e.g., cursor_eval, member_retention_probability_model)
 
 ### Environment Management
 ```bash
