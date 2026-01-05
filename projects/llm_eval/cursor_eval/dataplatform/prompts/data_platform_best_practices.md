@@ -10,7 +10,8 @@ Key Principles:
 - Use object-oriented programming for model architectures and functional programming for data processing pipelines.
 - Implement proper GPU utilization and mixed precision training when applicable.
 - Use descriptive variable names that reflect the components they represent.
-- Use type hints for all function signatures
+- Use type hints for functions that need type signatures so the user and someone can read it.
+  For example: get_df(df) -> df doesnt need it since the function already says it gets a dataframe
 - Prefer async operations for I/O-bound tasks
 - Use descriptive variable names that reflect their purpose
 - Structure code modularly with clear separation of concerns

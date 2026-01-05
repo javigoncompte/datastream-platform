@@ -2,19 +2,24 @@ from functools import wraps
 from typing import List, Optional
 
 import mlflow
+
 from dataplatform.core.logger import get_logger
 
 logger = get_logger(__name__)
 
 
 def setup_mlflow_experiment(
-    experiment_name: str, autolog_modules: Optional[List[str]] = None
+    experiment_name: str,
+    run_name: Optional[str] = None,
+    autolog_modules: Optional[List[str]] = None,
 ):
     """Decorator factory that sets up MLflow experiment for a function
 
     Args:
         experiment_name: Name of the MLflow experiment. This will be prefixed
                         with /Shared/Experiments/
+        run_name: Optional custom name for the MLflow run. If None, MLflow
+                  generates a random name.
         autolog_modules: List of MLflow modules to enable autologging for.
                         Examples: ['pytorch', 'langchain', 'xgboost',
                                    'sklearn', 'transformers']
@@ -107,15 +112,19 @@ def setup_mlflow_experiment(
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            with mlflow.start_run(experiment_id=experiment.experiment_id):
+            with mlflow.start_run(
+                experiment_id=experiment.experiment_id,
+                run_name=run_name,
+            ):
                 return func(*args, **kwargs)
 
         # Add attributes to the wrapper function
-        wrapper.mlflow_client = client
-        wrapper.experiment = experiment
-        wrapper.experiment_name = experiment.name
-        wrapper.experiment_id = experiment.experiment_id
-        wrapper.autolog_modules = autolog_modules or []
+        wrapper.mlflow_client = client  # type: ignore[attr-defined]
+        wrapper.experiment = experiment  # type: ignore[attr-defined]
+        wrapper.experiment_name = experiment.name  # type: ignore[attr-defined]
+        wrapper.experiment_id = experiment.experiment_id  # type: ignore[attr-defined]
+        wrapper.run_name = run_name  # type: ignore[attr-defined]
+        wrapper.autolog_modules = autolog_modules or []  # type: ignore[attr-defined]
         return wrapper
 
     return decorator

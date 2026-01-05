@@ -17,7 +17,7 @@ from mlflow.genai.scorers import scorer
 
 logger = logging.getLogger(__name__)
 
-JUDGE_MODEL = "databricks:/databricks-gpt-oss-120b"
+JUDGE_MODEL = "gemini:/gemini-3-pro-preview"
 
 asked_confirmation = make_judge(
     name="asked_confirmation",
@@ -50,12 +50,15 @@ provided_references = make_judge(
 uses_type_hints = make_judge(
     name="uses_type_hints",
     instructions=(
-        "Evaluate if the Python code uses type hints for function signatures.\n\n"
+        "Evaluate if the Python code uses type hints for function signatures. "
+        "If needed since Python is a dynamically typed language "
+        "not all functions need type hints. "
+        "For example: get_df(df) -> df doesnt need it since the function already says it gets a dataframe. "
+        "Answer 'yes' if type hints are present and needed on function signatures,"
+        " 'no' if functions lack type annotations.\n\n"
         "User's request:\n{{ inputs }}\n\n"
         "Agent's response:\n{{ outputs }}\n\n"
         "Look for type annotations like `def func(x: int) -> str:` or `param: list[str]`.\n\n"
-        "Answer 'yes' if type hints are present on function signatures, "
-        "'no' if functions lack type annotations."
     ),
     feedback_value_type=Literal["yes", "no"],
     model=JUDGE_MODEL,

@@ -13,7 +13,6 @@ from typing import Any
 
 import mlflow
 
-from dataplatform.core.mlflow_experiment import setup_mlflow_experiment
 from dataplatform.cursor_eval.agent import invoke_cursor_agent
 from dataplatform.cursor_eval.scorers import get_all_scorers
 from dataplatform.cursor_eval.test_cases import get_all_test_cases
@@ -63,9 +62,9 @@ def create_traced_predict_fn(model: str | None = None):
     return predict_fn
 
 
-@setup_mlflow_experiment(experiment_name="cursor_rules_eval")
 def evaluate(
     model: str | None = None,
+    experiment_name: str = "/Shared/Experiments/cursor_rules_eval",
 ) -> Any:
     """Run evaluation using MLflow 3.x mlflow.genai.evaluate().
 
@@ -75,26 +74,37 @@ def evaluate(
 
     Args:
         model: Model for cursor-agent (e.g., 'sonnet-4', 'gpt-5')
-        experiment_name: MLflow experiment name
+        experiment_name: MLflow experiment path
 
     Returns:
         MLflow EvaluationResult object
     """
-    mlflow.set_experiment("/Shared/Experiments/cursor_rules_eval")
+    mlflow.login()
+    mlflow.set_tracking_uri("databricks")
+    mlflow.set_experiment(experiment_name)
+
     eval_data = build_eval_dataset()
     predict_fn = create_traced_predict_fn(model=model)
     scorers = get_all_scorers()
 
+    model_name = model or "default"
+    run_name = f"cursor_eval_{model_name}"
+
     logger.info(f"Running evaluation with {len(eval_data)} test cases")
+    logger.info(f"Model: {model_name}")
     logger.info(
         f"Scorers: {[s.name if hasattr(s, 'name') else str(s) for s in scorers]}"
     )
 
-    result = mlflow.genai.evaluate(
-        data=eval_data,
-        predict_fn=predict_fn,
-        scorers=scorers,
-    )
+    with mlflow.start_run(run_name=run_name):
+        mlflow.log_param("cursor_agent_model", model_name)
+        mlflow.set_tag("agent_model", model_name)
+
+        result = mlflow.genai.evaluate(
+            data=eval_data,
+            predict_fn=predict_fn,
+            scorers=scorers,
+        )
 
     logger.info("Evaluation complete")
     return result

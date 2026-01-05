@@ -778,6 +778,7 @@ dependencies = [
     { name = "client" },
     { name = "core" },
     { name = "emoji" },
+    { name = "litellm" },
     { name = "mlflow", extra = ["databricks"] },
     { name = "transformation" },
 ]
@@ -803,6 +804,7 @@ requires-dist = [
     { name = "core", editable = "packages/core" },
     { name = "cursor-eval" },
     { name = "emoji", specifier = ">=2.15.0" },
+    { name = "litellm", specifier = ">=1.75.9" },
     { name = "mlflow", extras = ["databricks"], specifier = ">=3.8.0" },
     { name = "transformation", editable = "packages/transformation" },
 ]
